@@ -11,10 +11,10 @@ possible.
 
 ## Reporting issues
 
-Issues have to be reported on our [issues tracker](https://github.com/{[username]}/sweetch-bot/issues). Please:
+Issues have to be reported on our [issues tracker](https://github.com/devzbysiu/sweetch-bot/issues). Please:
 
 - Check that the issue has not already been reported.
-  - This can be achieved by searching keywords on the [issues tracker](https://github.com/{[username]}/sweetch-bot/issues).
+  - This can be achieved by searching keywords on the [issues tracker](https://github.com/devzbysiu/sweetch-bot/issues).
 - Try to use a clear title, and describe your problem with complete sentences.
 
 ## Pull requests
@@ -24,7 +24,7 @@ Try to do one pull request per change.
 ### Updating the changelog
 
 Update the changes you have made in
-[CHANGELOG](https://github.com/{[username]}/sweetch-bot/blob/master/CHANGELOG.org)
+[CHANGELOG](./CHANGELOG.md)
 file under the **Unreleased** section.
 
 Add the changes of your pull request to one of the following subsections,
@@ -47,7 +47,7 @@ If the required subsection does not exist yet under **Unreleased**, create it!
 This is no different than other Rust projects.
 
 ```shell
-git clone https://github.com/{[username]}/sweetch-bot
+git clone https://github.com/devzbysiu/sweetch-bot
 cd sweetch-bot
 cargo build
 ```
