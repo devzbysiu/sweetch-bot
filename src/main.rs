@@ -13,12 +13,14 @@ mod switch;
 fn main() -> Result<()> {
     pretty_env_logger::init();
     debug!("Starting");
-    daemonize(|| {
-        schedule(|| {
-            if are_games_on_sale() {
-                notify();
+    daemonize(|| -> Result<()> {
+        schedule(|| -> Result<()> {
+            if are_games_on_sale()? {
+                notify()?;
             }
-        });
-    });
+            Ok(())
+        })?;
+        Ok(())
+    })?;
     Ok(())
 }
