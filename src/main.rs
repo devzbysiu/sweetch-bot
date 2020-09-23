@@ -12,8 +12,7 @@ mod switch;
 
 fn main() -> Result<()> {
     daemonize(|| -> Result<()> {
-        std::env::set_var("RUST_LOG", "debug");
-        pretty_env_logger::init_timed();
+        setup_logger();
         debug!("starting bot");
         schedule(|| -> Result<()> {
             if are_games_on_sale()? {
@@ -25,4 +24,9 @@ fn main() -> Result<()> {
         });
     })?;
     Ok(())
+}
+
+fn setup_logger() {
+    std::env::set_var("RUST_LOG", "debug");
+    pretty_env_logger::init_timed();
 }
