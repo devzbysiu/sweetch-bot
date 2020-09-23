@@ -1,8 +1,7 @@
 use anyhow::Result;
 use cron::schedule;
 use daemon::daemonize;
-use log::debug;
-use notifier::notify;
+use notifier::{notify_failure, notify_success};
 use switch::are_games_on_sale;
 
 mod cron;
@@ -11,12 +10,13 @@ mod notifier;
 mod switch;
 
 fn main() -> Result<()> {
-    pretty_env_logger::init();
-    debug!("Starting");
     daemonize(|| -> Result<()> {
+        println!("starting bot");
         schedule(|| -> Result<()> {
             if are_games_on_sale()? {
-                notify()?;
+                notify_success()?;
+            } else {
+                notify_failure()?;
             }
             Ok(())
         });
