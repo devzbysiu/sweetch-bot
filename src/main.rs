@@ -15,7 +15,8 @@ fn main() -> Result<()> {
         setup_logger();
         debug!("starting bot");
         schedule(|| -> Result<()> {
-            let games = games_on_sale()?;
+            let game_titles = vec!["Ori and the Blind Forest: Definitive Edition".into()];
+            let games = games_on_sale(game_titles)?;
             if games.len() > 0 {
                 notify_success(games)?;
             } else {
