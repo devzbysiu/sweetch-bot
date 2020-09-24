@@ -21,7 +21,7 @@ fn build_body(games: Vec<Game>) -> String {
     let max_len = cmp::min(MAX_GAMES_IN_NOTIFICATION, games.len());
     let mut body = String::new();
     for i in 0..max_len {
-        body.push_str(&format!("- {}\n", games[i].title));
+        body.push_str(&format!("- {}\n", games[i].title()));
     }
     if games.len() > MAX_GAMES_IN_NOTIFICATION {
         body.push_str(&format!(

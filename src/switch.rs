@@ -3,13 +3,13 @@ use log::{debug, info};
 use serde::Deserialize;
 use ureq;
 
-pub(crate) fn games_on_sale(titles: Vec<String>) -> Result<Vec<Game>> {
+pub(crate) fn acceptable_games(titles: Vec<String>) -> Result<Vec<Game>> {
     info!("checking games on sale");
     let mut games = Vec::new();
     for title in &titles {
         let found_games = fetch(title)?;
         debug!("found games: {:#?}", &found_games);
-        games.extend(filter(found_games, &title));
+        games.extend(filter(found_games, &title, 7.0));
     }
     Ok(games)
 }
@@ -29,11 +29,12 @@ fn build_url<S: Into<String>>(title: S) -> String {
     url
 }
 
-fn filter(games: Vec<Game>, title: &str) -> Vec<Game> {
+fn filter(games: Vec<Game>, title: &str, price: f64) -> Vec<Game> {
     debug!("filtering by title: {}", title);
     games
         .into_iter()
-        .filter(|game| &game.title == title)
+        .filter(|game| game.title() == title)
+        .filter(|game| game.price() <= price)
         .collect::<Vec<Game>>()
 }
 
@@ -49,5 +50,20 @@ struct Response {
 
 #[derive(Deserialize, Debug)]
 pub(crate) struct Game {
-    pub(crate) title: String,
+    title: String,
+    price_discounted_f: Option<f64>,
+    price_regular_f: f64,
+}
+
+impl Game {
+    pub(crate) fn title(&self) -> String {
+        self.title.clone()
+    }
+
+    fn price(&self) -> f64 {
+        match self.price_discounted_f {
+            Some(discounted_price) => discounted_price.min(self.price_regular_f),
+            None => self.price_regular_f,
+        }
+    }
 }

@@ -3,7 +3,7 @@ use cron::schedule;
 use daemon::daemonize;
 use log::debug;
 use notifier::{notify_failure, notify_success};
-use switch::games_on_sale;
+use switch::acceptable_games;
 
 mod cron;
 mod daemon;
@@ -15,8 +15,11 @@ fn main() -> Result<()> {
         setup_logger();
         debug!("starting bot");
         schedule(|| -> Result<()> {
-            let game_titles = vec!["Ori and the Blind Forest: Definitive Edition".into()];
-            let games = games_on_sale(game_titles)?;
+            let game_titles = vec![
+                "Ori and the Blind Forest: Definitive Edition".into(),
+                "Don’t Starve: Nintendo Switch Edition".into(),
+            ];
+            let games = acceptable_games(game_titles)?;
             if games.len() > 0 {
                 notify_success(games)?;
             } else {
