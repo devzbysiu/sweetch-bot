@@ -11,9 +11,7 @@ where
     let mut scheduler = Scheduler::new();
     scheduler
         .every(1.day())
-        .at("7:18 pm")
-        .and_every(1.day())
-        .at("7:19 pm")
+        .at("5:10 pm")
         .run(move || fun().unwrap_or_else(|_| error!("failed to run fun in scheduler")));
     debug!("starting scheduler");
     run(&mut scheduler);

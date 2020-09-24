@@ -3,7 +3,7 @@ use cron::schedule;
 use daemon::daemonize;
 use log::debug;
 use notifier::{notify_failure, notify_success};
-use switch::are_games_on_sale;
+use switch::games_on_sale;
 
 mod cron;
 mod daemon;
@@ -15,8 +15,9 @@ fn main() -> Result<()> {
         setup_logger();
         debug!("starting bot");
         schedule(|| -> Result<()> {
-            if are_games_on_sale()? {
-                notify_success()?;
+            let games = games_on_sale()?;
+            if games.len() > 0 {
+                notify_success(games)?;
             } else {
                 notify_failure()?;
             }

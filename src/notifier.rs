@@ -1,16 +1,35 @@
+use crate::switch::Game;
 use anyhow::Result;
 use log::info;
 use notify_rust::{Notification, Timeout, Urgency};
+use std::cmp;
 
-pub(crate) fn notify_success() -> Result<()> {
+const MAX_GAMES_IN_NOTIFICATION: usize = 5;
+
+pub(crate) fn notify_success(games: Vec<Game>) -> Result<()> {
     info!("found games on sale - sending notification");
     Notification::new()
         .summary("Game Available")
-        .body("New Switch game is on sale! Check it out.")
+        .body(&build_body(games))
         .timeout(Timeout::Never)
         .urgency(Urgency::Critical)
         .show()?;
     Ok(())
+}
+
+fn build_body(games: Vec<Game>) -> String {
+    let max_len = cmp::min(MAX_GAMES_IN_NOTIFICATION, games.len());
+    let mut body = String::new();
+    for i in 0..max_len {
+        body.push_str(&format!("- {}\n", games[i].name));
+    }
+    if games.len() > MAX_GAMES_IN_NOTIFICATION {
+        body.push_str(&format!(
+            "and {} more",
+            games.len() - MAX_GAMES_IN_NOTIFICATION
+        ));
+    }
+    body
 }
 
 pub(crate) fn notify_failure() -> Result<()> {
