@@ -34,3 +34,5 @@ clokwerk = "0.3.3"
 daemonize = "0.4.1"
 log = "0.4.11"
 pretty_env_logger = "0.4.0"
+ureq = { version =  "1.4.1", features = ["json"] }
+serde = { version = "1.0.116", features = ["derive"] }
