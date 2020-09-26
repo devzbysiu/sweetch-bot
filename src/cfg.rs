@@ -1,5 +1,6 @@
 use anyhow::Result;
 use dirs;
+use log::debug;
 use serde::Deserialize;
 use std::fs::read_to_string;
 use std::path::{Path, PathBuf};
@@ -14,7 +15,9 @@ pub(crate) struct ScheduleConfig {
 
 impl ScheduleConfig {
     pub(crate) fn load() -> Result<Self> {
-        Ok(toml::from_str(&read_to_string(config_path())?)?)
+        let cfg: ScheduleConfig = toml::from_str(&read_to_string(config_path())?)?;
+        debug!("loaded schedule config: {:#?}", cfg);
+        Ok(cfg)
     }
 
     pub(crate) fn schedule(&self) -> Vec<String> {
@@ -41,7 +44,9 @@ pub(crate) struct WatchedGamesConfig {
 
 impl WatchedGamesConfig {
     pub(crate) fn load() -> Result<Self> {
-        Ok(toml::from_str(&read_to_string(config_path())?)?)
+        let cfg: WatchedGamesConfig = toml::from_str(&read_to_string(config_path())?)?;
+        debug!("loaded watched games config: {:#?}", cfg);
+        Ok(cfg)
     }
 
     pub(crate) fn watched_games(&self) -> Vec<WatchedGame> {
