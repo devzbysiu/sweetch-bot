@@ -1,6 +1,8 @@
 use anyhow::Result;
+use dirs;
 use serde::Deserialize;
 use std::fs::read_to_string;
+use std::path::{Path, PathBuf};
 use toml;
 
 #[derive(Debug, Deserialize)]
@@ -12,12 +14,17 @@ pub(crate) struct ScheduleConfig {
 
 impl ScheduleConfig {
     pub(crate) fn load() -> Result<Self> {
-        Ok(toml::from_str(&read_to_string("/tmp/sweetch.toml")?)?)
+        Ok(toml::from_str(&read_to_string(config_path())?)?)
     }
 
     pub(crate) fn schedule(&self) -> Vec<String> {
         self.schedule.run_at.clone()
     }
+}
+
+fn config_path() -> PathBuf {
+    Path::new(&dirs::config_dir().expect("failed to get system configuration dir"))
+        .join("sweetch-bot.toml")
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -34,14 +41,13 @@ pub(crate) struct WatchedGamesConfig {
 
 impl WatchedGamesConfig {
     pub(crate) fn load() -> Result<Self> {
-        Ok(toml::from_str(&read_to_string("/tmp/sweetch.toml")?)?)
+        Ok(toml::from_str(&read_to_string(config_path())?)?)
     }
 
     pub(crate) fn watched_games(&self) -> Vec<WatchedGame> {
         self.watched_games.clone()
     }
 }
-
 
 #[derive(Debug, Clone, Deserialize)]
 pub(crate) struct WatchedGame {
