@@ -7,6 +7,26 @@ use std::path::{Path, PathBuf};
 use toml;
 
 #[derive(Debug, Deserialize)]
+pub(crate) struct DebugConfig {
+    debug: Option<bool>,
+}
+
+impl DebugConfig {
+    pub(crate) fn load() -> Result<Self> {
+        let cfg: DebugConfig = toml::from_str(&read_to_string(config_path())?)?;
+        debug!("loaded schedule config: {:#?}", cfg);
+        Ok(cfg)
+    }
+
+    pub(crate) fn debug_enabled(&self) -> bool {
+        match self.debug {
+            Some(debug) => debug,
+            None => false,
+        }
+    }
+}
+
+#[derive(Debug, Deserialize)]
 pub(crate) struct ScheduleConfig {
     schedule: Schedule,
     #[serde(rename = "watched_game")]
