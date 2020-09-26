@@ -19,7 +19,10 @@ where
             job = job.and_every(1.day()).at(&time);
         }
     }
-    job.run(move || fun().unwrap_or_else(|_| error!("failed to run fun in scheduler")));
+    job.run(move || match fun() {
+        Ok(_) => {}
+        Err(e) => error!("failed to run fun in scheduler: {}", e),
+    });
     debug!("starting scheduler");
     run(&mut scheduler);
 }

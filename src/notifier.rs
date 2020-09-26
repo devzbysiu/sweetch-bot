@@ -4,7 +4,7 @@ use log::info;
 use notify_rust::{Notification, Timeout, Urgency};
 use std::cmp;
 
-const MAX_GAMES_IN_NOTIFICATION: usize = 5;
+const MAX_GAMES_IN_NOTIFICATION: usize = 10;
 
 pub(crate) fn notify_success(games: Vec<Game>) -> Result<()> {
     info!("found games on sale - sending notification");
