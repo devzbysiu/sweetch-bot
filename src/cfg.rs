@@ -2,9 +2,24 @@ use anyhow::Result;
 use dirs;
 use log::debug;
 use serde::Deserialize;
+use std::fmt;
 use std::fs::read_to_string;
 use std::path::{Path, PathBuf};
 use toml;
+
+pub(crate) struct Config {}
+
+impl Config {
+    pub(crate) fn load<T>() -> Result<T>
+    where
+        for<'a> T: Deserialize<'a> + fmt::Debug,
+    {
+        let content = read_to_string(config_path())?;
+        let cfg: T = toml::from_str(&content)?;
+        debug!("loaded config: {:#?}", cfg);
+        Ok(cfg)
+    }
+}
 
 #[derive(Debug, Deserialize)]
 pub(crate) struct DebugConfig {
@@ -12,12 +27,6 @@ pub(crate) struct DebugConfig {
 }
 
 impl DebugConfig {
-    pub(crate) fn load() -> Result<Self> {
-        let cfg: DebugConfig = toml::from_str(&read_to_string(config_path())?)?;
-        debug!("loaded schedule config: {:#?}", cfg);
-        Ok(cfg)
-    }
-
     pub(crate) fn debug_enabled(&self) -> bool {
         match self.debug {
             Some(debug) => debug,
@@ -34,12 +43,6 @@ pub(crate) struct ScheduleConfig {
 }
 
 impl ScheduleConfig {
-    pub(crate) fn load() -> Result<Self> {
-        let cfg: ScheduleConfig = toml::from_str(&read_to_string(config_path())?)?;
-        debug!("loaded schedule config: {:#?}", cfg);
-        Ok(cfg)
-    }
-
     pub(crate) fn schedule(&self) -> Vec<String> {
         self.schedule.run_at.clone()
     }

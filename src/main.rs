@@ -1,5 +1,5 @@
 use anyhow::Result;
-use cfg::{DebugConfig, ScheduleConfig, WatchedGamesConfig};
+use cfg::{Config, DebugConfig, ScheduleConfig, WatchedGamesConfig};
 use cron::schedule;
 use daemon::daemonize;
 use log::debug;
@@ -16,9 +16,9 @@ fn main() -> Result<()> {
     daemonize(|| -> Result<()> {
         setup_logger()?;
         debug!("starting bot");
-        let cfg = ScheduleConfig::load()?;
+        let cfg = Config::load::<ScheduleConfig>()?;
         schedule(cfg.schedule(), || -> Result<()> {
-            let games_cfg = WatchedGamesConfig::load()?;
+            let games_cfg = Config::load::<WatchedGamesConfig>()?;
             let games = acceptable_games(games_cfg.watched_games())?;
             if games.len() > 0 {
                 notify_success(games)?;
@@ -32,7 +32,7 @@ fn main() -> Result<()> {
 }
 
 fn setup_logger() -> Result<()> {
-    let debug_cfg = DebugConfig::load()?;
+    let debug_cfg = Config::load::<DebugConfig>()?;
     match debug_cfg.debug_enabled() {
         true => std::env::set_var("RUST_LOG", "sweetch_bot=debug"),
         false => std::env::set_var("RUST_LOG", "sweetch_bot=info"),
