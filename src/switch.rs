@@ -1,15 +1,20 @@
+use crate::cfg::WatchedGame;
 use anyhow::Result;
 use log::{debug, info};
 use serde::Deserialize;
 use ureq;
 
-pub(crate) fn acceptable_games(titles: Vec<String>) -> Result<Vec<Game>> {
+pub(crate) fn acceptable_games(watched_games: Vec<WatchedGame>) -> Result<Vec<Game>> {
     info!("checking games on sale");
     let mut games = Vec::new();
-    for title in &titles {
-        let found_games = fetch(title)?;
+    for watched_game in &watched_games {
+        let found_games = fetch(watched_game.title())?;
         debug!("found games: {:#?}", &found_games);
-        games.extend(filter(found_games, &title, 7.0));
+        games.extend(filter(
+            found_games,
+            &watched_game.title(),
+            watched_game.acceptable_price(),
+        ));
     }
     Ok(games)
 }

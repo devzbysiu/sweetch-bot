@@ -1,10 +1,12 @@
 use anyhow::Result;
+use cfg::Config;
 use cron::schedule;
 use daemon::daemonize;
 use log::debug;
 use notifier::{notify_failure, notify_success};
 use switch::acceptable_games;
 
+mod cfg;
 mod cron;
 mod daemon;
 mod notifier;
@@ -14,12 +16,10 @@ fn main() -> Result<()> {
     daemonize(|| -> Result<()> {
         setup_logger();
         debug!("starting bot");
-        schedule(|| -> Result<()> {
-            let game_titles = vec![
-                "Ori and the Blind Forest: Definitive Edition".into(),
-                "Don’t Starve: Nintendo Switch Edition".into(),
-            ];
-            let games = acceptable_games(game_titles)?;
+        let cfg = Config::load()?;
+        schedule(cfg.schedule(), || -> Result<()> {
+            let cfg = Config::load()?;
+            let games = acceptable_games(cfg.watched_games())?;
             if games.len() > 0 {
                 notify_success(games)?;
             } else {

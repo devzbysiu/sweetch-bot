@@ -4,15 +4,22 @@ use log::{debug, error, info};
 use std::thread;
 use std::time::Duration;
 
-pub(crate) fn schedule<F>(mut fun: F) -> !
+pub(crate) fn schedule<F>(schedule: Vec<String>, mut fun: F) -> !
 where
     F: 'static + FnMut() -> Result<()> + Send,
 {
     let mut scheduler = Scheduler::new();
-    scheduler
-        .every(1.day())
-        .at("7:15 pm")
-        .run(move || fun().unwrap_or_else(|_| error!("failed to run fun in scheduler")));
+    let default_time = "12:01 pm".into();
+    let first_hour = schedule.first().unwrap_or(&default_time);
+    info!("setting scheduler at: {}", first_hour);
+    let mut job = scheduler.every(1.day()).at(first_hour);
+    if schedule.len() > 1 {
+        for time in &schedule[1..] {
+            info!("setting scheduler at: {}", time);
+            job = job.and_every(1.day()).at(&time);
+        }
+    }
+    job.run(move || fun().unwrap_or_else(|_| error!("failed to run fun in scheduler")));
     debug!("starting scheduler");
     run(&mut scheduler);
 }
