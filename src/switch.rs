@@ -10,11 +10,7 @@ pub(crate) fn acceptable_games(watched_games: Vec<WatchedGame>) -> Result<Vec<Ga
     for watched_game in &watched_games {
         let found_games = fetch(watched_game.title())?;
         debug!("found games: {:#?}", &found_games);
-        games.extend(filter(
-            found_games,
-            &watched_game.title(),
-            watched_game.acceptable_price(),
-        ));
+        games.extend(filter(found_games, &watched_game));
     }
     Ok(games)
 }
@@ -34,12 +30,28 @@ fn build_url<S: Into<String>>(title: S) -> String {
     url
 }
 
-fn filter(games: Vec<Game>, title: &str, price: f64) -> Vec<Game> {
-    debug!("filtering by title: {}", title);
+fn filter(games: Vec<Game>, watched_game: &WatchedGame) -> Vec<Game> {
+    debug!("filtering by title: {}", watched_game.title());
     games
         .into_iter()
-        .filter(|game| game.title() == title)
-        .filter(|game| game.price() <= price)
+        .filter(|game| game.title() == watched_game.title())
+        .filter(|game| match watched_game.acceptable_price() {
+            Some(price) => {
+                debug!(
+                    "acceptable price set, checking {} <= {}",
+                    game.price(),
+                    price
+                );
+                game.price() <= price
+            }
+            None => {
+                debug!(
+                    "acceptable price not set, checking if game is on sale: {}",
+                    game.is_on_sale()
+                );
+                game.is_on_sale()
+            }
+        })
         .collect::<Vec<Game>>()
 }
 
@@ -58,6 +70,7 @@ pub(crate) struct Game {
     title: String,
     price_discounted_f: Option<f64>,
     price_regular_f: f64,
+    price_has_discount_b: bool,
 }
 
 impl Game {
@@ -70,5 +83,9 @@ impl Game {
             Some(discounted_price) => discounted_price.min(self.price_regular_f),
             None => self.price_regular_f,
         }
+    }
+
+    fn is_on_sale(&self) -> bool {
+        self.price_has_discount_b
     }
 }

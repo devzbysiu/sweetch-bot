@@ -57,7 +57,7 @@ impl WatchedGamesConfig {
 #[derive(Debug, Clone, Deserialize)]
 pub(crate) struct WatchedGame {
     title: String,
-    acceptable_price: f64,
+    acceptable_price: Option<f64>,
 }
 
 impl WatchedGame {
@@ -65,7 +65,7 @@ impl WatchedGame {
         self.title.clone()
     }
 
-    pub(crate) fn acceptable_price(&self) -> f64 {
+    pub(crate) fn acceptable_price(&self) -> Option<f64> {
         self.acceptable_price
     }
 }
