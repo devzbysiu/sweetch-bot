@@ -36,23 +36,27 @@ fn filter(games: Vec<Game>, watched_game: &WatchedGame) -> Vec<Game> {
         .into_iter()
         .filter(|game| game.title() == watched_game.title())
         .filter(|game| match watched_game.acceptable_price() {
-            Some(price) => {
-                debug!(
-                    "acceptable price set, checking {} <= {}",
-                    game.price(),
-                    price
-                );
-                game.price() <= price
-            }
-            None => {
-                debug!(
-                    "acceptable price not set, checking if game is on sale: {}",
-                    game.is_on_sale()
-                );
-                game.is_on_sale()
-            }
+            Some(price) => check_price_acceptable(&game, price),
+            None => check_is_on_sale(&game),
         })
         .collect::<Vec<Game>>()
+}
+
+fn check_price_acceptable(game: &Game, price: f64) -> bool {
+    debug!(
+        "acceptable price set, checking {} <= {}",
+        game.price(),
+        price
+    );
+    game.price() <= price
+}
+
+fn check_is_on_sale(game: &Game) -> bool {
+    debug!(
+        "acceptable price not set, checking if game is on sale: {}",
+        game.is_on_sale()
+    );
+    game.is_on_sale()
 }
 
 #[derive(Deserialize)]
