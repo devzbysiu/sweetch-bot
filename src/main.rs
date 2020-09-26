@@ -1,5 +1,5 @@
 use anyhow::Result;
-use cfg::Config;
+use cfg::{ScheduleConfig, WatchedGamesConfig};
 use cron::schedule;
 use daemon::daemonize;
 use log::debug;
@@ -16,9 +16,9 @@ fn main() -> Result<()> {
     daemonize(|| -> Result<()> {
         setup_logger();
         debug!("starting bot");
-        let cfg = Config::load()?;
+        let cfg = ScheduleConfig::load()?;
         schedule(cfg.schedule(), || -> Result<()> {
-            let cfg = Config::load()?;
+            let cfg = WatchedGamesConfig::load()?;
             let games = acceptable_games(cfg.watched_games())?;
             if games.len() > 0 {
                 notify_success(games)?;

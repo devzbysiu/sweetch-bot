@@ -4,19 +4,15 @@ use std::fs::read_to_string;
 use toml;
 
 #[derive(Debug, Deserialize)]
-pub(crate) struct Config {
+pub(crate) struct ScheduleConfig {
     schedule: Schedule,
     #[serde(rename = "watched_game")]
     watched_games: Vec<WatchedGame>,
 }
 
-impl Config {
+impl ScheduleConfig {
     pub(crate) fn load() -> Result<Self> {
         Ok(toml::from_str(&read_to_string("/tmp/sweetch.toml")?)?)
-    }
-
-    pub(crate) fn watched_games(&self) -> Vec<WatchedGame> {
-        self.watched_games.clone()
     }
 
     pub(crate) fn schedule(&self) -> Vec<String> {
@@ -28,6 +24,24 @@ impl Config {
 struct Schedule {
     run_at: Vec<String>,
 }
+
+#[derive(Debug, Deserialize)]
+pub(crate) struct WatchedGamesConfig {
+    schedule: Schedule,
+    #[serde(rename = "watched_game")]
+    watched_games: Vec<WatchedGame>,
+}
+
+impl WatchedGamesConfig {
+    pub(crate) fn load() -> Result<Self> {
+        Ok(toml::from_str(&read_to_string("/tmp/sweetch.toml")?)?)
+    }
+
+    pub(crate) fn watched_games(&self) -> Vec<WatchedGame> {
+        self.watched_games.clone()
+    }
+}
+
 
 #[derive(Debug, Clone, Deserialize)]
 pub(crate) struct WatchedGame {
