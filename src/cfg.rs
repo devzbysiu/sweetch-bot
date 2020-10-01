@@ -66,12 +66,6 @@ pub(crate) struct WatchedGamesConfig {
 }
 
 impl WatchedGamesConfig {
-    pub(crate) fn load() -> Result<Self> {
-        let cfg: WatchedGamesConfig = toml::from_str(&read_to_string(config_path())?)?;
-        debug!("loaded watched games config: {:#?}", cfg);
-        Ok(cfg)
-    }
-
     pub(crate) fn watched_games(&self) -> Vec<WatchedGame> {
         self.watched_games.clone()
     }
