@@ -28,7 +28,7 @@ where
 }
 
 fn run(scheduler: &mut Scheduler) -> ! {
-    let seconds = 10;
+    let seconds = 600;
     loop {
         scheduler.run_pending();
         info!("no time yet, waiting {} seconds", seconds);

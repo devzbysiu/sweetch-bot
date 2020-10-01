@@ -2,6 +2,7 @@ use anyhow::Result;
 use cfg::{Config, DebugConfig, ScheduleConfig, WatchedGamesConfig};
 use cron::schedule;
 use daemon::daemonize;
+use flexi_logger::{detailed_format, Age, Cleanup, Criterion, Logger, Naming};
 use log::debug;
 use notifier::{notify_failure, notify_success};
 use switch::acceptable_games;
@@ -33,10 +34,17 @@ fn main() -> Result<()> {
 
 fn setup_logger() -> Result<()> {
     let debug_cfg = Config::load::<DebugConfig>()?;
-    match debug_cfg.debug_enabled() {
-        true => std::env::set_var("RUST_LOG", "sweetch_bot=debug"),
-        false => std::env::set_var("RUST_LOG", "sweetch_bot=info"),
-    }
-    pretty_env_logger::init_timed();
+    let log_str = match debug_cfg.debug_enabled() {
+        true => "sweetch_bot=debug",
+        false => "sweetch_bot=info",
+    };
+    Logger::with_str(log_str)
+        .format(detailed_format)
+        .rotate(
+            Criterion::Age(Age::Day),
+            Naming::Timestamps,
+            Cleanup::KeepLogFiles(3),
+        )
+        .start()?;
     Ok(())
 }
