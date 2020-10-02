@@ -3,17 +3,21 @@ use cfg::{Config, DebugConfig, ScheduleConfig, WatchedGamesConfig};
 use cron::schedule;
 use daemon::daemonize;
 use flexi_logger::{detailed_format, Age, Cleanup, Criterion, Logger, Naming};
+use init::{handle_args, sweetch_dir};
 use log::debug;
 use notifier::{notify_failure, notify_success};
+use std::env;
 use switch::acceptable_games;
 
 mod cfg;
 mod cron;
 mod daemon;
+mod init;
 mod notifier;
 mod switch;
 
 fn main() -> Result<()> {
+    handle_args(&env::args().collect::<Vec<String>>())?;
     daemonize(|| -> Result<()> {
         setup_logger()?;
         debug!("starting bot");
@@ -39,6 +43,8 @@ fn setup_logger() -> Result<()> {
         false => "sweetch_bot=info",
     };
     Logger::with_str(log_str)
+        .directory(sweetch_dir()?)
+        .log_to_file()
         .format(detailed_format)
         .rotate(
             Criterion::Age(Age::Day),
