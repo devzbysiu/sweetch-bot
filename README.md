@@ -3,11 +3,11 @@
   <h1><code>sweetch-bot</code></h1>
 
   <h3>
-    <strong>CHANGEME</strong>
+    <strong>Daemon which sends desktop notification about games on sale</strong>
   </h3>
 
   <p>
-    <img src="https://github.com/devzbysiu/sweetch-bot/workflows/Main/badge.svg" alt="CI status
+    <img src="https://img.shields.io/github/workflow/status/devzbysiu/sweetch-bot/ci?style=for-the-badge" alt="CI status badge" />
     badge" />
     <a href="https://codecov.io/gh/devzbysiu/sweetch-bot">
       <img src="https://img.shields.io/codecov/c/github/devzbysiu/sweetch-bot?style=for-the-badge&token=bfdc4b9d55534910ae48fba0b8e984d0" alt="Code coverage"/>
@@ -37,15 +37,49 @@
 
 # <p id="about">About</p>
 
-## --- TODO ---
+This app works as a daemon and periodically fetches data about switch games then shows desktop
+notification if any of the predefined games is on sale or have price below set limit.
 
 # <p id="installation">Installation</p>
 
-## --- TODO ---
+- go to [releases](https://github.com/devzbysiu/je/releases) page
+- download the latest `sweetch-bot` archive for your OS
+- extract it
+- run `sweetch-bot`
 
 # <p id="configuration">Configuration</p>
 
-## --- TODO ---
+### Location
+`sweetch-bot` expects that configuration is in OS' configuration path.
+| Platform | Value                                                  | Example                                                   |
+| -------  | ------------------------------------------------------ | --------------------------------------------------------- |
+| Linux    | `$XDG_CONFIG_HOME` or `$HOME`/.config/sweetch-bot.toml | /home/alice/.config/sweetch-bot.toml                      |
+| macOS    | `$HOME`/Library/Application Support/sweetch-bot.toml   | /Users/Alice/Library/Application Support/sweetch-bot.toml |
+| Windows  | `{FOLDERID_RoamingAppData}`/sweetch-bot.toml           | C:\Users\Alice\AppData\Roaming\sweetch-bot.toml           |
+
+### Example configuration
+Below you can see all options which can be configured.
+```toml
+debug = true                      # Enables debug level in logs.
+
+[schedule]
+run_at = ["7:00 pm", "8:00 am"]   # Run games check at those hours.
+
+# List of watched games below
+
+[[watched_game]]
+title = "Minecraft Dungeons"      # By default, if this game is on sale, it will be
+                                  # included in notification. You can use price 
+                                  # criterion - see below.
+
+[[watched_game]]
+title = "DOOM"
+acceptable_price = 7.00           # If this game has price <= acceptable_price, then
+                                  # it will be included in the notification.
+
+[[watched_game]]
+title = "Alien: Isolation"
+```
 
 # <p id="license">License</p>
 
