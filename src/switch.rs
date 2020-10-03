@@ -139,3 +139,35 @@ impl Game {
         self.price_discounted_f.is_some() || self.price_regular_f.is_some()
     }
 }
+
+impl Default for Game {
+    fn default() -> Self {
+        Game {
+            title: "".into(),
+            price_discounted_f: None,
+            price_regular_f: None,
+            price_has_discount_b: None,
+        }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_games_has_price_when_price_discounted_set() {
+        // given
+        let game = Game {
+            title: "Not important".into(),
+            price_discounted_f: Some(1.0),
+            ..Default::default()
+        };
+
+        // when
+        let has_price = game.has_price();
+
+        // then
+        assert_eq!(has_price, true);
+    }
+}
