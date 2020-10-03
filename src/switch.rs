@@ -32,8 +32,13 @@ fn build_url<S: Into<String>>(title: S) -> String {
     let title = title.into();
     let title_normalized = title.replace(":", "\\:"); // normalization because of solr used underneath
 
-    let url =
-    format!("http://search.nintendo-europe.com/en/select?rows=99&fq=type:GAME%20AND%20system_type:nintendoswitch*%20AND%20product_code_txt:*%20AND%20title:{}&q={}&sort=sorting_title%20asc&start=0&wt=json", title_normalized, title);
+    let url = format!(
+        "http://search.nintendo-europe.com/en/select?rows=99\
+        &fq=type:GAME%20AND%20system_type:nintendoswitch*%20AND\
+        %20product_code_txt:*%20AND%20title:{}&q={}&sort=sorting_title\
+        %20asc&start=0&wt=json",
+        title_normalized, title
+    );
     debug!("built url: {}", url);
     url
 }
