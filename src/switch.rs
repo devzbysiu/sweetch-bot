@@ -170,4 +170,20 @@ mod test {
         // then
         assert_eq!(has_price, true);
     }
+
+    #[test]
+    fn test_games_has_price_when_price_regular_set() {
+        // given
+        let game = Game {
+            title: "Not important".into(),
+            price_regular_f: Some(1.0),
+            ..Default::default()
+        };
+
+        // when
+        let has_price = game.has_price();
+
+        // then
+        assert_eq!(has_price, true);
+    }
 }
