@@ -2,12 +2,11 @@ use crate::cfg::WatchedGame;
 use anyhow::Result;
 use log::{debug, error, info};
 use serde::Deserialize;
-use ureq;
 
-pub(crate) fn acceptable_games(watched_games: Vec<WatchedGame>) -> Result<Vec<Game>> {
+pub(crate) fn acceptable_games(watched_games: &[WatchedGame]) -> Result<Vec<Game>> {
     info!("checking games on sale");
     let mut games = Vec::new();
-    for watched_game in &watched_games {
+    for watched_game in watched_games {
         let found_games = match fetch(watched_game.title()) {
             Ok(games) => games,
             Err(e) => {
@@ -161,7 +160,7 @@ mod test {
         let game = Game {
             title: "Not important".into(),
             price_discounted_f: Some(1.0),
-            ..Default::default()
+            ..Game::default()
         };
 
         // when
@@ -177,7 +176,7 @@ mod test {
         let game = Game {
             title: "Not important".into(),
             price_regular_f: Some(1.0),
-            ..Default::default()
+            ..Game::default()
         };
 
         // when

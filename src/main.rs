@@ -22,13 +22,13 @@ fn main() -> Result<()> {
         setup_logger()?;
         debug!("starting bot");
         let cfg = Config::load::<ScheduleConfig>()?;
-        schedule(cfg.schedule(), || -> Result<()> {
+        schedule(&cfg.schedule(), || -> Result<()> {
             let games_cfg = Config::load::<WatchedGamesConfig>()?;
-            let games = acceptable_games(games_cfg.watched_games())?;
-            if games.len() > 0 {
-                notify_success(games)?;
-            } else {
+            let games = acceptable_games(&games_cfg.watched_games())?;
+            if games.is_empty() {
                 notify_failure()?;
+            } else {
+                notify_success(&games)?;
             }
             Ok(())
         });
@@ -38,9 +38,10 @@ fn main() -> Result<()> {
 
 fn setup_logger() -> Result<()> {
     let debug_cfg = Config::load::<DebugConfig>()?;
-    let log_str = match debug_cfg.debug_enabled() {
-        true => "sweetch_bot=debug",
-        false => "sweetch_bot=info",
+    let log_str = if debug_cfg.debug_enabled() {
+        "sweetch_bot=debug"
+    } else {
+        "sweetch_bot=info"
     };
     Logger::with_str(log_str)
         .directory(sweetch_dir()?)

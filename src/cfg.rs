@@ -1,11 +1,9 @@
 use anyhow::Result;
-use dirs;
 use log::debug;
 use serde::Deserialize;
 use std::fmt;
 use std::fs::read_to_string;
 use std::path::{Path, PathBuf};
-use toml;
 
 pub(crate) struct Config {}
 

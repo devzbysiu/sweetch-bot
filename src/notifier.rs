@@ -6,7 +6,7 @@ use std::cmp;
 
 const MAX_GAMES_IN_NOTIFICATION: usize = 10;
 
-pub(crate) fn notify_success(games: Vec<Game>) -> Result<()> {
+pub(crate) fn notify_success(games: &[Game]) -> Result<()> {
     info!("found games on sale - sending notification");
     Notification::new()
         .summary("Game Available")
@@ -17,11 +17,11 @@ pub(crate) fn notify_success(games: Vec<Game>) -> Result<()> {
     Ok(())
 }
 
-fn build_body(games: Vec<Game>) -> String {
+fn build_body(games: &[Game]) -> String {
     let max_len = cmp::min(MAX_GAMES_IN_NOTIFICATION, games.len());
     let mut body = String::new();
-    for i in 0..max_len {
-        body.push_str(&format!("- {}\n", games[i].title()));
+    for game in games.iter().take(max_len) {
+        body.push_str(&format!("- {}\n", game.title()));
     }
     if games.len() > MAX_GAMES_IN_NOTIFICATION {
         body.push_str(&format!(

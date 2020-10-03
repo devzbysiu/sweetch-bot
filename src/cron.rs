@@ -4,7 +4,7 @@ use log::{debug, error, info};
 use std::thread;
 use std::time::Duration;
 
-pub(crate) fn schedule<F>(schedule: Vec<String>, mut fun: F) -> !
+pub(crate) fn schedule<F>(schedule: &[String], mut fun: F) -> !
 where
     F: 'static + FnMut() -> Result<()> + Send,
 {

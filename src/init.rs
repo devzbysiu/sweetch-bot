@@ -1,5 +1,4 @@
 use anyhow::Result;
-use dirs;
 use std::fs::{create_dir_all, File};
 use std::io::prelude::*;
 use std::path::PathBuf;
