@@ -1,9 +1,10 @@
+use crate::init::sweetch_dir;
 use anyhow::Result;
 use log::debug;
 use serde::Deserialize;
 use std::fmt;
 use std::fs::read_to_string;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 pub(crate) struct Config {}
 
@@ -12,7 +13,7 @@ impl Config {
     where
         for<'a> T: Deserialize<'a> + fmt::Debug,
     {
-        let content = read_to_string(config_path())?;
+        let content = read_to_string(config_path()?)?;
         let cfg: T = toml::from_str(&content)?;
         debug!("loaded config: {:#?}", cfg);
         Ok(cfg)
@@ -46,9 +47,8 @@ impl ScheduleConfig {
     }
 }
 
-fn config_path() -> PathBuf {
-    Path::new(&dirs::config_dir().expect("failed to get system configuration dir"))
-        .join("sweetch-bot.toml")
+fn config_path() -> Result<PathBuf> {
+    Ok(sweetch_dir()?.join("sweetch-bot.toml"))
 }
 
 #[derive(Debug, Clone, Deserialize)]
