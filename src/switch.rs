@@ -155,7 +155,7 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_games_has_price_when_price_discounted_set() {
+    fn test_game_has_price_when_price_discounted_set() {
         // given
         let game = Game {
             title: "Not important".into(),
@@ -171,7 +171,7 @@ mod test {
     }
 
     #[test]
-    fn test_games_has_price_when_price_regular_set() {
+    fn test_game_has_price_when_price_regular_set() {
         // given
         let game = Game {
             title: "Not important".into(),
@@ -187,7 +187,7 @@ mod test {
     }
 
     #[test]
-    fn test_games_has_price_when_price_not_set() {
+    fn test_game_has_price_when_price_not_set() {
         // given
         let game = Game::default();
 
