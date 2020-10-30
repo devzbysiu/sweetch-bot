@@ -166,9 +166,9 @@ mod test {
         assert_eq!(
             url,
             "http://search.nintendo-europe.com/en/select?rows=99\
-        &fq=type:GAME%20AND%20system_type:nintendoswitch*%20AND\
-        %20product_code_txt:*%20AND%20title:Test title&q=Test title&sort=sorting_title\
-        %20asc&start=0&wt=json"
+            &fq=type:GAME%20AND%20system_type:nintendoswitch*%20AND\
+            %20product_code_txt:*%20AND%20title:Test title&q=Test title\
+            &sort=sorting_title%20asc&start=0&wt=json"
         );
     }
 
@@ -184,9 +184,9 @@ mod test {
         assert_eq!(
             url,
             "http://search.nintendo-europe.com/en/select?rows=99\
-        &fq=type:GAME%20AND%20system_type:nintendoswitch*%20AND\
-        %20product_code_txt:*%20AND%20title:Test\\:title&q=Test:title\
-        &sort=sorting_title%20asc&start=0&wt=json"
+            &fq=type:GAME%20AND%20system_type:nintendoswitch*%20AND\
+            %20product_code_txt:*%20AND%20title:Test\\:title&q=Test:title\
+            &sort=sorting_title%20asc&start=0&wt=json"
         );
     }
 
@@ -202,10 +202,28 @@ mod test {
         assert_eq!(
             url,
             "http://search.nintendo-europe.com/en/select?rows=99\
-        &fq=type:GAME%20AND%20system_type:nintendoswitch*%20AND\
-        %20product_code_txt:*%20AND%20title:Test!@#$%^&*()-=[]\\;\
-        ',./<>?\\:\"{}|+_&q=Test!@#$%^&*()-=[]\\;',./<>?:\"{}|+_\
-        &sort=sorting_title%20asc&start=0&wt=json"
+            &fq=type:GAME%20AND%20system_type:nintendoswitch*%20AND\
+            %20product_code_txt:*%20AND%20title:Test!@#$%^&*()-=[]\\;\
+            ',./<>?\\:\"{}|+_&q=Test!@#$%^&*()-=[]\\;',./<>?:\"{}|+_\
+            &sort=sorting_title%20asc&start=0&wt=json"
+        );
+    }
+
+    #[test]
+    fn test_build_url_with_empty_title() {
+        // given
+        let title = "";
+
+        // when
+        let url = build_url(title);
+
+        // then
+        assert_eq!(
+            url,
+            "http://search.nintendo-europe.com/en/select?rows=99\
+            &fq=type:GAME%20AND%20system_type:nintendoswitch*%20AND\
+            %20product_code_txt:*%20AND%20title:&q=&sort=sorting_title\
+            %20asc&start=0&wt=json"
         );
     }
 
