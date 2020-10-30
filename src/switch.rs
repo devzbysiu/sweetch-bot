@@ -466,4 +466,21 @@ mod test {
         assert_eq!(on_sale, true);
         assert_eq!(not_on_sale, false);
     }
+
+    #[test]
+    fn test_game_default() {
+        // given
+        let game = Game {
+            title: "".into(),
+            price_discounted_f: None,
+            price_regular_f: None,
+            price_has_discount_b: None,
+        };
+
+        // when
+        let default = Game::default();
+
+        // then
+        assert_eq!(game, default);
+    }
 }
