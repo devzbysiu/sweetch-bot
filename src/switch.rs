@@ -3,11 +3,17 @@ use anyhow::Result;
 use log::{debug, error, info};
 use serde::Deserialize;
 
-pub(crate) fn acceptable_games(watched_games: &[WatchedGame]) -> Result<Vec<Game>> {
+pub(crate) fn acceptable_games<T>(
+    watched_games: &[WatchedGame],
+    games_provider: T,
+) -> Result<Vec<Game>>
+where
+    T: Fn(String) -> Result<Vec<Game>>,
+{
     info!("checking games on sale");
     let mut games = Vec::new();
     for watched_game in watched_games {
-        let found_games = match fetch(watched_game.title()) {
+        let found_games = match games_provider(watched_game.title()) {
             Ok(games) => games,
             Err(e) => {
                 error!("failed to fetch games: {}", e);
@@ -20,7 +26,7 @@ pub(crate) fn acceptable_games(watched_games: &[WatchedGame]) -> Result<Vec<Game
     Ok(games)
 }
 
-fn fetch<S: Into<String>>(title: S) -> Result<Vec<Game>> {
+pub(crate) fn fetch<S: Into<String>>(title: S) -> Result<Vec<Game>> {
     let root: Root = ureq::get(&build_url(title))
         .call()
         .into_json_deserialize::<Root>()?;

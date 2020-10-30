@@ -8,6 +8,7 @@ use log::debug;
 use notifier::{notify_failure, notify_success};
 use std::env;
 use switch::acceptable_games;
+use switch::fetch;
 
 mod cfg;
 mod cron;
@@ -26,7 +27,7 @@ fn main() -> Result<()> {
         let cfg = Config::load::<ScheduleConfig>()?;
         schedule(&cfg.schedule(), || -> Result<()> {
             let games_cfg = Config::load::<WatchedGamesConfig>()?;
-            let games = acceptable_games(&games_cfg.watched_games())?;
+            let games = acceptable_games(&games_cfg.watched_games(), fetch)?;
             if games.is_empty() {
                 notify_failure()?;
             } else {
