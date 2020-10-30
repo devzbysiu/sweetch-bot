@@ -123,10 +123,6 @@ impl Game {
             None => false,
         }
     }
-
-    fn has_price(&self) -> bool {
-        self.price_discounted_f.is_some() || self.price_regular_f.is_some()
-    }
 }
 
 impl Default for Game {
@@ -391,52 +387,5 @@ mod test {
 
         // then
         assert_eq!(filtered_games, vec![]);
-    }
-
-    #[test]
-    fn test_game_has_price_when_price_discounted_set() {
-        testutils::setup_logger();
-        // given
-        let game = Game {
-            title: "Not important".into(),
-            price_discounted_f: Some(1.0),
-            ..Game::default()
-        };
-
-        // when
-        let has_price = game.has_price();
-
-        // then
-        assert_eq!(has_price, true);
-    }
-
-    #[test]
-    fn test_game_has_price_when_price_regular_set() {
-        testutils::setup_logger();
-        // given
-        let game = Game {
-            title: "Not important".into(),
-            price_regular_f: Some(1.0),
-            ..Game::default()
-        };
-
-        // when
-        let has_price = game.has_price();
-
-        // then
-        assert_eq!(has_price, true);
-    }
-
-    #[test]
-    fn test_games_has_price_when_price_not_set() {
-        testutils::setup_logger();
-        // given
-        let game = Game::default();
-
-        // when
-        let has_price = game.has_price();
-
-        // then
-        assert_eq!(has_price, false);
     }
 }
