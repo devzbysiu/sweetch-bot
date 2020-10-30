@@ -3,12 +3,12 @@ use anyhow::Result;
 use log::{debug, error, info};
 use serde::Deserialize;
 
-pub(crate) fn acceptable_games<T>(
+pub(crate) fn acceptable_games<F>(
     watched_games: &[WatchedGame],
-    games_provider: T,
+    games_provider: F,
 ) -> Result<Vec<Game>>
 where
-    T: Fn(String) -> Result<Vec<Game>>,
+    F: Fn(String) -> Result<Vec<Game>>,
 {
     info!("checking games on sale");
     let mut games = Vec::new();
