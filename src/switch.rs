@@ -441,7 +441,7 @@ mod test {
     }
 
     #[test]
-    fn test_game_is_on_sale() {
+    fn test_game_is_on_sale_when_field_is_set() {
         const NOT_IMPORTANT: Option<f64> = None;
         // given
         let game_on_sale = Game {
@@ -464,6 +464,24 @@ mod test {
 
         // then
         assert_eq!(on_sale, true);
+        assert_eq!(not_on_sale, false);
+    }
+
+    #[test]
+    fn test_game_is_on_sale_without_field_set() {
+        const NOT_IMPORTANT: Option<f64> = None;
+        // given
+        let game_not_on_sale = Game {
+            title: "title".into(),
+            price_discounted_f: NOT_IMPORTANT,
+            price_regular_f: NOT_IMPORTANT,
+            price_has_discount_b: None,
+        };
+
+        // when
+        let not_on_sale = game_not_on_sale.is_on_sale();
+
+        // then
         assert_eq!(not_on_sale, false);
     }
 
