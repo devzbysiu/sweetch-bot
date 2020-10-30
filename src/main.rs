@@ -15,6 +15,8 @@ mod daemon;
 mod init;
 mod notifier;
 mod switch;
+#[cfg(test)]
+mod testutils;
 
 fn main() -> Result<()> {
     handle_args(&env::args().collect::<Vec<String>>())?;

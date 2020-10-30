@@ -47,18 +47,8 @@ fn filter(games: Vec<Game>, watched_game: &WatchedGame) -> Vec<Game> {
     games
         .into_iter()
         .filter(|game| titles_match(game, watched_game))
-        .filter(has_price) // for some reason, not all entries have price
-        .filter(|game| price_acceptable_or_on_sale(game, watched_game))
+        .filter(|game| price_acceptable(game, watched_game) || is_on_sale(game))
         .collect::<Vec<Game>>()
-}
-
-fn has_price(game: &Game) -> bool {
-    debug!(
-        "checking game [{}] has price: {}",
-        game.title(),
-        game.has_price()
-    );
-    game.has_price()
 }
 
 fn titles_match(game: &Game, watched_game: &WatchedGame) -> bool {
@@ -72,11 +62,11 @@ fn titles_match(game: &Game, watched_game: &WatchedGame) -> bool {
     result
 }
 
-fn price_acceptable_or_on_sale(game: &Game, watched_game: &WatchedGame) -> bool {
-    let result = match watched_game.acceptable_price() {
-        Some(price) => check_price_acceptable(&game, price),
-        None => check_is_on_sale(&game),
-    };
+fn price_acceptable(game: &Game, watched_game: &WatchedGame) -> bool {
+    let mut result = false;
+    if let Some(price) = watched_game.acceptable_price() {
+        result = check_price_acceptable(&game, price);
+    }
     debug!("checking price is acceptable or game on sale: {}", result);
     result
 }
@@ -90,7 +80,7 @@ fn check_price_acceptable(game: &Game, price: f64) -> bool {
     game.price() <= price
 }
 
-fn check_is_on_sale(game: &Game) -> bool {
+fn is_on_sale(game: &Game) -> bool {
     debug!("filtering by 'is on sale': {}", game.is_on_sale());
     game.is_on_sale()
 }
@@ -105,7 +95,7 @@ struct Response {
     docs: Vec<Game>,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, PartialEq)]
 pub(crate) struct Game {
     title: String,
     price_discounted_f: Option<f64>,
@@ -153,9 +143,11 @@ impl Default for Game {
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::testutils;
 
     #[test]
     fn test_build_url_with_space() {
+        testutils::setup_logger();
         // given
         let title = "Test title";
 
@@ -174,6 +166,7 @@ mod test {
 
     #[test]
     fn test_build_url_with_colon() {
+        testutils::setup_logger();
         // given
         let title = "Test:title";
 
@@ -192,6 +185,7 @@ mod test {
 
     #[test]
     fn test_build_url_with_special_chars() {
+        testutils::setup_logger();
         // given
         let title = "Test!@#$%^&*()-=[]\\;',./<>?:\"{}|+_";
 
@@ -211,6 +205,7 @@ mod test {
 
     #[test]
     fn test_build_url_with_empty_title() {
+        testutils::setup_logger();
         // given
         let title = "";
 
@@ -228,7 +223,179 @@ mod test {
     }
 
     #[test]
+    fn test_filter_with_one_game_matched() {
+        testutils::setup_logger();
+        // given
+        let games = vec![
+            Game {
+                title: "Game 1".into(),
+                price_discounted_f: Some(0.5),
+                price_regular_f: Some(7.0),
+                price_has_discount_b: Some(true),
+            },
+            Game {
+                title: "Game 2".into(),
+                price_discounted_f: Some(7.0),
+                price_regular_f: Some(7.0),
+                price_has_discount_b: Some(true),
+            },
+        ];
+
+        let watched_game = WatchedGame::new("Game 1").with_acceptable_price(1.0);
+
+        // when
+        let filtered_games = filter(games, &watched_game);
+
+        // then
+        assert_eq!(
+            filtered_games,
+            vec![Game {
+                title: "Game 1".into(),
+                price_discounted_f: Some(0.5),
+                price_regular_f: Some(7.0),
+                price_has_discount_b: Some(true),
+            }]
+        );
+    }
+
+    #[test]
+    fn test_filter_with_title_not_matching() {
+        testutils::setup_logger();
+        // given
+        let games = vec![
+            Game {
+                title: "Game 1".into(),
+                price_discounted_f: Some(0.5),
+                price_regular_f: Some(7.0),
+                price_has_discount_b: Some(true),
+            },
+            Game {
+                title: "Game 2".into(),
+                price_discounted_f: Some(7.0),
+                price_regular_f: Some(7.0),
+                price_has_discount_b: Some(true),
+            },
+        ];
+
+        let watched_game = WatchedGame::new("Game 3");
+
+        // when
+        let filtered_games = filter(games, &watched_game);
+
+        // then
+        assert_eq!(filtered_games, vec![]);
+    }
+
+    #[test]
+    fn test_filter_with_empty_games_list() {
+        testutils::setup_logger();
+        // given
+        let games = vec![];
+
+        let watched_game = WatchedGame::new("Game 1").with_acceptable_price(1.0);
+
+        // when
+        let filtered_games = filter(games, &watched_game);
+
+        // then
+        assert_eq!(filtered_games, vec![]);
+    }
+
+    #[test]
+    fn test_filter_without_acceptable_price_but_with_discount() {
+        testutils::setup_logger();
+        // given
+        let games = vec![
+            Game {
+                title: "Game 1".into(),
+                price_discounted_f: Some(0.5),
+                price_regular_f: Some(7.0),
+                price_has_discount_b: Some(true),
+            },
+            Game {
+                title: "Game 2".into(),
+                price_discounted_f: Some(7.0),
+                price_regular_f: Some(7.0),
+                price_has_discount_b: Some(true),
+            },
+        ];
+
+        let watched_game = WatchedGame::new("Game 1");
+
+        // when
+        let filtered_games = filter(games, &watched_game);
+
+        // then
+        assert_eq!(
+            filtered_games,
+            vec![Game {
+                title: "Game 1".into(),
+                price_discounted_f: Some(0.5),
+                price_regular_f: Some(7.0),
+                price_has_discount_b: Some(true),
+            }]
+        );
+    }
+
+    #[test]
+    fn test_filter_without_acceptable_price_and_without_discount() {
+        testutils::setup_logger();
+        // given
+        let games = vec![
+            Game {
+                title: "Game 1".into(),
+                price_discounted_f: Some(0.5),
+                price_regular_f: Some(7.0),
+                price_has_discount_b: Some(false),
+            },
+            Game {
+                title: "Game 2".into(),
+                price_discounted_f: Some(7.0),
+                price_regular_f: Some(7.0),
+                price_has_discount_b: Some(false),
+            },
+        ];
+
+        let watched_game = WatchedGame::new("Game 1");
+
+        // when
+        let filtered_games = filter(games, &watched_game);
+
+        // then
+        assert_eq!(filtered_games, vec![]);
+    }
+
+    #[test]
+    fn test_filter_with_games_without_price() {
+        testutils::setup_logger();
+        // given
+        let games = vec![
+            Game {
+                title: "Game 1".into(),
+                price_discounted_f: Some(0.5),
+                price_regular_f: None,
+                price_has_discount_b: Some(false),
+            },
+            Game {
+                title: "Game 2".into(),
+                price_discounted_f: Some(7.0),
+                price_regular_f: Some(7.0),
+                price_has_discount_b: Some(false),
+            },
+        ];
+
+        let watched_game = WatchedGame::new("Game 1");
+
+        // when
+        let filtered_games = filter(games, &watched_game);
+
+        // then
+        assert_eq!(filtered_games, vec![]);
+    }
+
+    #[test]
     fn test_game_has_price_when_price_discounted_set() {
+        testutils::setup_logger();
         // given
         let game = Game {
             title: "Not important".into(),
@@ -245,6 +412,7 @@ mod test {
 
     #[test]
     fn test_game_has_price_when_price_regular_set() {
+        testutils::setup_logger();
         // given
         let game = Game {
             title: "Not important".into(),
@@ -261,6 +429,7 @@ mod test {
 
     #[test]
     fn test_games_has_price_when_price_not_set() {
+        testutils::setup_logger();
         // given
         let game = Game::default();
 

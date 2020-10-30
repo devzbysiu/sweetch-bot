@@ -76,6 +76,18 @@ pub(crate) struct WatchedGame {
 }
 
 impl WatchedGame {
+    pub(crate) fn new<S: Into<String>>(title: S) -> Self {
+        Self {
+            title: title.into(),
+            acceptable_price: None,
+        }
+    }
+
+    pub(crate) fn with_acceptable_price(mut self, price: f64) -> Self {
+        self.acceptable_price = Some(price);
+        self
+    }
+
     pub(crate) fn title(&self) -> String {
         self.title.clone()
     }
