@@ -390,6 +390,42 @@ mod test {
     }
 
     #[test]
+    fn test_titles_match_when_they_indeed_match() {
+        testutils::setup_logger();
+        // given
+        let game = Game {
+            title: "Game title".into(),
+            ..Game::default()
+        };
+
+        let watched_game = WatchedGame::new("Game title");
+
+        // when
+        let titles_match = titles_match(&game, &watched_game);
+
+        // then
+        assert_eq!(titles_match, true);
+    }
+
+    #[test]
+    fn test_titles_match_when_they_dont_match() {
+        testutils::setup_logger();
+        // given
+        let game = Game {
+            title: "Game title".into(),
+            ..Game::default()
+        };
+
+        let watched_game = WatchedGame::new("Other title");
+
+        // when
+        let titles_match = titles_match(&game, &watched_game);
+
+        // then
+        assert_eq!(titles_match, false);
+    }
+
+    #[test]
     fn test_game_lowest_price_with_discounted_price() {
         // given
         let game = Game {
@@ -408,6 +444,7 @@ mod test {
 
     #[test]
     fn test_game_lowest_price_without_discounted_price() {
+        testutils::setup_logger();
         // given
         let game = Game {
             title: "title".into(),
@@ -442,20 +479,17 @@ mod test {
 
     #[test]
     fn test_game_is_on_sale_when_field_is_set() {
-        const NOT_IMPORTANT: Option<f64> = None;
         // given
         let game_on_sale = Game {
             title: "title".into(),
-            price_discounted_f: NOT_IMPORTANT,
-            price_regular_f: NOT_IMPORTANT,
             price_has_discount_b: Some(true),
+            ..Game::default()
         };
 
         let game_not_on_sale = Game {
             title: "title".into(),
-            price_discounted_f: NOT_IMPORTANT,
-            price_regular_f: NOT_IMPORTANT,
             price_has_discount_b: Some(false),
+            ..Game::default()
         };
 
         // when
@@ -469,13 +503,11 @@ mod test {
 
     #[test]
     fn test_game_is_on_sale_without_field_set() {
-        const NOT_IMPORTANT: Option<f64> = None;
         // given
         let game_not_on_sale = Game {
             title: "title".into(),
-            price_discounted_f: NOT_IMPORTANT,
-            price_regular_f: NOT_IMPORTANT,
             price_has_discount_b: None,
+            ..Game::default()
         };
 
         // when
