@@ -155,6 +155,61 @@ mod test {
     use super::*;
 
     #[test]
+    fn test_build_url_with_space() {
+        // given
+        let title = "Test title";
+
+        // when
+        let url = build_url(title);
+
+        // then
+        assert_eq!(
+            url,
+            "http://search.nintendo-europe.com/en/select?rows=99\
+        &fq=type:GAME%20AND%20system_type:nintendoswitch*%20AND\
+        %20product_code_txt:*%20AND%20title:Test title&q=Test title&sort=sorting_title\
+        %20asc&start=0&wt=json"
+        );
+    }
+
+    #[test]
+    fn test_build_url_with_colon() {
+        // given
+        let title = "Test:title";
+
+        // when
+        let url = build_url(title);
+
+        // then
+        assert_eq!(
+            url,
+            "http://search.nintendo-europe.com/en/select?rows=99\
+        &fq=type:GAME%20AND%20system_type:nintendoswitch*%20AND\
+        %20product_code_txt:*%20AND%20title:Test\\:title&q=Test:title\
+        &sort=sorting_title%20asc&start=0&wt=json"
+        );
+    }
+
+    #[test]
+    fn test_build_url_with_special_chars() {
+        // given
+        let title = "Test!@#$%^&*()-=[]\\;',./<>?:\"{}|+_";
+
+        // when
+        let url = build_url(title);
+
+        // then
+        assert_eq!(
+            url,
+            "http://search.nintendo-europe.com/en/select?rows=99\
+        &fq=type:GAME%20AND%20system_type:nintendoswitch*%20AND\
+        %20product_code_txt:*%20AND%20title:Test!@#$%^&*()-=[]\\;\
+        ',./<>?\\:\"{}|+_&q=Test!@#$%^&*()-=[]\\;',./<>?:\"{}|+_\
+        &sort=sorting_title%20asc&start=0&wt=json"
+        );
+    }
+
+    #[test]
     fn test_game_has_price_when_price_discounted_set() {
         // given
         let game = Game {
@@ -187,7 +242,7 @@ mod test {
     }
 
     #[test]
-    fn test_game_has_price_when_price_not_set() {
+    fn test_games_has_price_when_price_not_set() {
         // given
         let game = Game::default();
 
