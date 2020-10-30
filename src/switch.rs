@@ -74,10 +74,10 @@ fn price_acceptable(game: &Game, watched_game: &WatchedGame) -> bool {
 fn check_price_acceptable(game: &Game, price: f64) -> bool {
     debug!(
         "filtering by acceptable price: checking {} <= {}",
-        game.price(),
+        game.lowest_price(),
         price
     );
-    game.price() <= price
+    game.lowest_price() <= price
 }
 
 fn is_on_sale(game: &Game) -> bool {
@@ -109,7 +109,7 @@ impl Game {
         self.title.clone()
     }
 
-    fn price(&self) -> f64 {
+    fn lowest_price(&self) -> f64 {
         let price_regular = self.price_regular_f.unwrap_or(f64::MAX);
         match self.price_discounted_f {
             Some(discounted_price) => discounted_price.min(price_regular),
@@ -387,5 +387,83 @@ mod test {
 
         // then
         assert_eq!(filtered_games, vec![]);
+    }
+
+    #[test]
+    fn test_game_lowest_price_with_discounted_price() {
+        // given
+        let game = Game {
+            title: "title".into(),
+            price_discounted_f: Some(7.0),
+            price_regular_f: Some(10.0),
+            price_has_discount_b: Some(true),
+        };
+
+        // when
+        let price = game.lowest_price();
+
+        // then
+        assert_eq!(price, 7.0);
+    }
+
+    #[test]
+    fn test_game_lowest_price_without_discounted_price() {
+        // given
+        let game = Game {
+            title: "title".into(),
+            price_discounted_f: None,
+            price_regular_f: Some(10.0),
+            price_has_discount_b: Some(true),
+        };
+
+        // when
+        let price = game.lowest_price();
+
+        // then
+        assert_eq!(price, 10.0);
+    }
+
+    #[test]
+    fn test_game_lowest_without_discounted_price_bigger_than_regular_price() {
+        // given
+        let game = Game {
+            title: "title".into(),
+            price_discounted_f: Some(11.0),
+            price_regular_f: Some(10.0),
+            price_has_discount_b: Some(true),
+        };
+
+        // when
+        let price = game.lowest_price();
+
+        // then
+        assert_eq!(price, 10.0);
+    }
+
+    #[test]
+    fn test_game_is_on_sale() {
+        const NOT_IMPORTANT: Option<f64> = None;
+        // given
+        let game_on_sale = Game {
+            title: "title".into(),
+            price_discounted_f: NOT_IMPORTANT,
+            price_regular_f: NOT_IMPORTANT,
+            price_has_discount_b: Some(true),
+        };
+
+        let game_not_on_sale = Game {
+            title: "title".into(),
+            price_discounted_f: NOT_IMPORTANT,
+            price_regular_f: NOT_IMPORTANT,
+            price_has_discount_b: Some(false),
+        };
+
+        // when
+        let on_sale = game_on_sale.is_on_sale();
+        let not_on_sale = game_not_on_sale.is_on_sale();
+
+        // then
+        assert_eq!(on_sale, true);
+        assert_eq!(not_on_sale, false);
     }
 }
