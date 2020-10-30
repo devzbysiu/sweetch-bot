@@ -500,6 +500,20 @@ mod test {
     }
 
     #[test]
+    fn test_acceptable_games_when_provider_returns_error() {
+        testutils::setup_logger();
+        // given
+        let games_provider = |_| -> Result<Vec<Game>> { anyhow::bail!("Some error") };
+        let watched_games = vec![WatchedGame::new("Game 1")];
+
+        // when
+        let filtered_games = acceptable_games(&watched_games, games_provider).unwrap();
+
+        // then
+        assert_eq!(filtered_games, vec![]);
+    }
+
+    #[test]
     fn test_game_default() {
         // given
         let game = Game {
