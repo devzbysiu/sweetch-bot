@@ -54,7 +54,6 @@ struct Schedule {
 
 #[derive(Debug, Deserialize)]
 pub(crate) struct WatchedGamesConfig {
-    schedule: Schedule,
     #[serde(rename = "watched_game")]
     watched_games: Vec<WatchedGame>,
 }
@@ -65,7 +64,7 @@ impl WatchedGamesConfig {
     }
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, PartialEq)]
 pub(crate) struct WatchedGame {
     title: String,
     acceptable_price: Option<f64>,
@@ -211,10 +210,10 @@ mod test {
         "#;
 
         // when
-        let dbg_config = Config::load::<ScheduleConfig>(config_content).unwrap();
+        let schedule_cfg = Config::load::<ScheduleConfig>(config_content).unwrap();
 
         // then
-        assert_eq!(dbg_config.schedule(), vec!["7:00 pm"]);
+        assert_eq!(schedule_cfg.schedule(), vec!["7:00 pm"]);
     }
 
     #[test]
@@ -227,10 +226,10 @@ mod test {
         "#;
 
         // when
-        let dbg_config = Config::load::<ScheduleConfig>(config_content).unwrap();
+        let schedule_cfg = Config::load::<ScheduleConfig>(config_content).unwrap();
 
         // then
-        assert_eq!(dbg_config.schedule(), vec!["7:00 am", "6:00 pm"]);
+        assert_eq!(schedule_cfg.schedule(), vec!["7:00 am", "6:00 pm"]);
     }
 
     #[test]
@@ -243,10 +242,10 @@ mod test {
         "#;
 
         // when
-        let dbg_config = Config::load::<ScheduleConfig>(config_content).unwrap();
+        let schedule_cfg = Config::load::<ScheduleConfig>(config_content).unwrap();
 
         // then
-        assert_eq!(dbg_config.schedule(), Vec::<String>::new());
+        assert_eq!(schedule_cfg.schedule(), Vec::<String>::new());
     }
 
     #[test]
@@ -259,11 +258,11 @@ mod test {
         "#;
 
         // when
-        let dbg_config = Config::load::<ScheduleConfig>(config_content).unwrap();
+        let schedule_cfg = Config::load::<ScheduleConfig>(config_content).unwrap();
 
         // then
         assert_eq!(
-            dbg_config.schedule(),
+            schedule_cfg.schedule(),
             vec!["incorrect hour 1", "incorrect hour 2"]
         );
     }
@@ -283,5 +282,100 @@ mod test {
 
         // should panic
         let _ = Config::load::<ScheduleConfig>(config_content).unwrap();
+    }
+
+    #[test]
+    fn test_load_watched_games_config_with_valid_input() {
+        testutils::setup_logger();
+        // given
+        let config_content = r#"
+            [[watched_game]]
+            title = "Game 1 title here"
+            acceptable_price = 0.7
+
+            [[watched_game]]
+            title = "Game 2 title here"
+         "#;
+
+        // when
+        let watched_games_cfg = Config::load::<WatchedGamesConfig>(config_content).unwrap();
+
+        // then
+        assert_eq!(watched_games_cfg.watched_games().len(), 2);
+        assert_eq!(
+            watched_games_cfg.watched_games(),
+            vec![
+                WatchedGame {
+                    title: "Game 1 title here".into(),
+                    acceptable_price: Some(0.7),
+                },
+                WatchedGame {
+                    title: "Game 2 title here".into(),
+                    acceptable_price: None,
+                }
+            ]
+        );
+    }
+
+    #[test]
+    fn test_load_watched_games_config_with_too_many_fields() {
+        testutils::setup_logger();
+        // given
+        let config_content = r#"
+            [[watched_game]]
+            title = "Game 1 title here"
+            acceptable_price = 0.7
+            additional_field = "Something"
+
+            [[watched_game]]
+            title = "Game 2 title here"
+         "#;
+
+        // when
+        let watched_games_cfg = Config::load::<WatchedGamesConfig>(config_content).unwrap();
+
+        // then
+        assert_eq!(watched_games_cfg.watched_games().len(), 2);
+        assert_eq!(
+            watched_games_cfg.watched_games(),
+            vec![
+                WatchedGame {
+                    title: "Game 1 title here".into(),
+                    acceptable_price: Some(0.7),
+                },
+                WatchedGame {
+                    title: "Game 2 title here".into(),
+                    acceptable_price: None,
+                }
+            ]
+        );
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_load_watched_games_config_without_title() {
+        testutils::setup_logger();
+        // given
+        let config_content = r#"
+            [[watched_game]]
+            acceptable_price = 0.7
+
+            [[watched_game]]
+            title = "Game 2 title here"
+         "#;
+
+        // should_panic
+        let _ = Config::load::<WatchedGamesConfig>(config_content).unwrap();
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_watched_games_are_mandatory() {
+        testutils::setup_logger();
+        // given
+        let config_content = "";
+
+        // should_panic
+        let _ = Config::load::<WatchedGamesConfig>(config_content).unwrap();
     }
 }
