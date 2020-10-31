@@ -21,8 +21,11 @@ fn incorrect_args_passed(args: &[String]) -> bool {
 }
 
 fn print_usage() {
-    println!(
-        r#"sweetch-bot - notify about game sales
+    println!("{}", usage());
+}
+
+fn usage() -> String {
+    r#"sweetch-bot - notify about game sales
 
 USAGE:
     sweetch-bot [FLAGS]
@@ -30,7 +33,7 @@ USAGE:
 FLAGS:
     --init      Initialize configuration
 "#
-    )
+    .to_string()
 }
 
 fn init_arg_passed(args: &[String]) -> bool {
@@ -51,8 +54,12 @@ pub(crate) fn sweetch_dir() -> Result<PathBuf> {
 
 fn create_init_config() -> Result<()> {
     let mut cfg = File::create(sweetch_dir()?.join("sweetch-bot.toml"))?;
-    cfg.write_all(
-        r#"[schedule]
+    cfg.write_all(init_config().as_bytes())?;
+    Ok(())
+}
+
+fn init_config() -> String {
+    r#"[schedule]
 run_at = ["7:00 pm"]
 
 [[watched_game]]
@@ -61,9 +68,7 @@ title = "Game 1 title here"
 [[watched_game]]
 title = "Game 2 title here"
 "#
-        .as_bytes(),
-    )?;
-    Ok(())
+    .into()
 }
 
 #[cfg(test)]
@@ -119,6 +124,16 @@ mod test {
     }
 
     #[test]
+    fn test_usage() {
+        // when
+        let usage = usage();
+
+        // then
+        assert!(usage.contains("USAGE"));
+        assert!(usage.contains("--init"));
+    }
+
+    #[test]
     fn test_init_arg_passed_with_more_than_2_args() {
         // given
         let args: Vec<String> = vec![
@@ -156,5 +171,17 @@ mod test {
 
         // then
         assert_eq!(init_arg_passed, true);
+    }
+
+    #[test]
+    fn test_init_config() {
+        // when
+        let init_config = init_config();
+
+        // then
+        assert!(init_config.contains("[schedule]"));
+        assert!(init_config.contains("run_at"));
+        assert!(init_config.contains("[[watched_game]]"));
+        assert!(init_config.contains("title"));
     }
 }
