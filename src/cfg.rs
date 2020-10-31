@@ -98,6 +98,7 @@ impl WatchedGame {
 mod test {
     use super::*;
     use crate::testutils;
+    use dirs;
 
     #[test]
     fn test_load_debug_config_without_debug_option() {
@@ -377,5 +378,16 @@ mod test {
 
         // should_panic
         let _ = Config::load::<WatchedGamesConfig>(config_content).unwrap();
+    }
+
+    #[test]
+    fn test_config_path() {
+        // given
+        let config_dir = dirs::config_dir().unwrap();
+        // when
+        let cfg_path = config_path().unwrap();
+
+        // then
+        assert_eq!(cfg_path, config_dir.join("sweetch-bot/sweetch-bot.toml"));
     }
 }
