@@ -34,7 +34,7 @@ FLAGS:
 }
 
 fn init_arg_passed(args: &[String]) -> bool {
-    args.len() == 2 && args[1] == "--init"
+    args.len() >= 2 && args[1] == "--init"
 }
 
 fn init() -> Result<()> {
@@ -64,4 +64,49 @@ title = "Game 2 title here"
         .as_bytes(),
     )?;
     Ok(())
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_init_arg_passed_with_more_than_2_args() {
+        // given
+        let args: Vec<String> = vec![
+            "NOT_IMPORTANT".into(),
+            "--init".into(),
+            "NOT_IMPORTANT".into(),
+        ];
+
+        // when
+        let init_arg_passed = init_arg_passed(&args);
+
+        // then
+        assert_eq!(init_arg_passed, true);
+    }
+
+    #[test]
+    fn test_init_arg_passed_when_not_passed() {
+        // given
+        let args: Vec<String> = vec!["NOT_IMPORTANT".into(), "--not-init".into()];
+
+        // when
+        let init_arg_passed = init_arg_passed(&args);
+
+        // then
+        assert_eq!(init_arg_passed, false);
+    }
+
+    #[test]
+    fn test_init_arg_passed_with_exactly_2_args() {
+        // given
+        let args: Vec<String> = vec!["NOT_IMPORTANT".into(), "--init".into()];
+
+        // when
+        let init_arg_passed = init_arg_passed(&args);
+
+        // then
+        assert_eq!(init_arg_passed, true);
+    }
 }
