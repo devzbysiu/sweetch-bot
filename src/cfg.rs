@@ -3,17 +3,15 @@ use anyhow::Result;
 use log::debug;
 use serde::Deserialize;
 use std::fmt;
-use std::fs::read_to_string;
 use std::path::PathBuf;
 
 pub(crate) struct Config {}
 
 impl Config {
-    pub(crate) fn load<T>() -> Result<T>
+    pub(crate) fn load<T>(content: &str) -> Result<T>
     where
         for<'a> T: Deserialize<'a> + fmt::Debug,
     {
-        let content = read_to_string(config_path()?)?;
         let cfg: T = toml::from_str(&content)?;
         debug!("loaded config: {:#?}", cfg);
         Ok(cfg)
@@ -47,7 +45,7 @@ impl ScheduleConfig {
     }
 }
 
-fn config_path() -> Result<PathBuf> {
+pub(crate) fn config_path() -> Result<PathBuf> {
     Ok(sweetch_dir()?.join("sweetch-bot.toml"))
 }
 
