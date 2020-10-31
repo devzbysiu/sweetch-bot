@@ -28,6 +28,9 @@ jobs:
             binary_postfix: ".exe"
 
     steps:
+      - name: Install dbus lib
+        run: sudo apt install libdbus-glib-1-dev
+
       - name: Installing Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
