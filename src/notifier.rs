@@ -42,3 +42,33 @@ pub(crate) fn notify_failure() -> Result<()> {
         .show()?;
     Ok(())
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_build_body_with_few_games() {
+        // given
+        let games = vec![Game::new("Game 1"), Game::new("Game 2")];
+
+        // when
+        let body = build_body(&games);
+
+        // then
+        assert_eq!(body, "- Game 1\n- Game 2\n")
+    }
+
+    #[test]
+    fn test_build_body_with_too_many_games() {
+        // given
+        let games = vec![Game::new("Game Title"); MAX_GAMES_IN_NOTIFICATION + 1];
+        let expected = format!("{}and 1 more", "- Game Title\n".repeat(10));
+
+        // when
+        let body = build_body(&games);
+
+        // then
+        assert_eq!(body, expected);
+    }
+}
