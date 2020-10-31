@@ -9,8 +9,9 @@ where
     F: 'static + FnMut() -> Result<()> + Send,
 {
     let mut scheduler = Scheduler::new();
-    let default_time = "12:01 pm".into();
-    let first_hour = schedule.first().unwrap_or(&default_time);
+    let first_hour = schedule
+        .first()
+        .expect("At least one hour should be specified in run_at");
     info!("setting scheduler at: {}", first_hour);
     let mut job = scheduler.every(1.day()).at(first_hour);
     if schedule.len() > 1 {

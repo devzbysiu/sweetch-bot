@@ -35,8 +35,6 @@ impl DebugConfig {
 #[derive(Debug, Deserialize)]
 pub(crate) struct ScheduleConfig {
     schedule: Schedule,
-    #[serde(rename = "watched_game")]
-    watched_games: Vec<WatchedGame>,
 }
 
 impl ScheduleConfig {
@@ -100,9 +98,11 @@ impl WatchedGame {
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::testutils;
 
     #[test]
     fn test_load_debug_config_without_debug_option() {
+        testutils::setup_logger();
         // given
         let config_content = r#"
             [[watched_game]]
@@ -118,6 +118,7 @@ mod test {
 
     #[test]
     fn test_load_debug_config_with_debug_option_set_to_false() {
+        testutils::setup_logger();
         // given
         let config_content = "debug = false";
 
@@ -130,6 +131,7 @@ mod test {
 
     #[test]
     fn test_load_debug_config_with_debug_enabled() {
+        testutils::setup_logger();
         // given
         let config_content = "debug = true";
 
@@ -142,6 +144,7 @@ mod test {
 
     #[test]
     fn test_load_debug_config_with_real_life_config_and_debug_enabled() {
+        testutils::setup_logger();
         // given
         let config_content = r#"
             debug = true
@@ -165,6 +168,7 @@ mod test {
 
     #[test]
     fn test_load_debug_config_with_real_life_config_and_without_debug() {
+        testutils::setup_logger();
         // given
         let config_content = r#"
             [schedule]
@@ -186,6 +190,7 @@ mod test {
 
     #[test]
     fn test_load_debug_config_with_empty_config() {
+        testutils::setup_logger();
         // given
         let config_content = "";
 
@@ -194,5 +199,89 @@ mod test {
 
         // then
         assert_eq!(dbg_config.debug_enabled(), false);
+    }
+
+    #[test]
+    fn test_load_schedule_config_with_one_hour() {
+        testutils::setup_logger();
+        // given
+        let config_content = r#"
+            [schedule]
+            run_at = ["7:00 pm"]
+        "#;
+
+        // when
+        let dbg_config = Config::load::<ScheduleConfig>(config_content).unwrap();
+
+        // then
+        assert_eq!(dbg_config.schedule(), vec!["7:00 pm"]);
+    }
+
+    #[test]
+    fn test_load_schedule_config_with_multiple_hours() {
+        testutils::setup_logger();
+        // given
+        let config_content = r#"
+            [schedule]
+            run_at = ["7:00 am", "6:00 pm"]
+        "#;
+
+        // when
+        let dbg_config = Config::load::<ScheduleConfig>(config_content).unwrap();
+
+        // then
+        assert_eq!(dbg_config.schedule(), vec!["7:00 am", "6:00 pm"]);
+    }
+
+    #[test]
+    fn test_load_schedule_config_without_hours() {
+        testutils::setup_logger();
+        // given
+        let config_content = r#"
+            [schedule]
+            run_at = []
+        "#;
+
+        // when
+        let dbg_config = Config::load::<ScheduleConfig>(config_content).unwrap();
+
+        // then
+        assert_eq!(dbg_config.schedule(), Vec::<String>::new());
+    }
+
+    #[test]
+    fn test_load_schedule_config_with_wrong_inputs() {
+        testutils::setup_logger();
+        // given
+        let config_content = r#"
+            [schedule]
+            run_at = ["incorrect hour 1", "incorrect hour 2"]
+        "#;
+
+        // when
+        let dbg_config = Config::load::<ScheduleConfig>(config_content).unwrap();
+
+        // then
+        assert_eq!(
+            dbg_config.schedule(),
+            vec!["incorrect hour 1", "incorrect hour 2"]
+        );
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_schedule_is_mandatory() {
+        testutils::setup_logger();
+        // given
+        let config_content = r#"
+            [[watched_game]]
+            title = "Game 1 title here"
+
+            [[watched_game]]
+            title = "Game 2 title here"
+         "#;
+
+        // should panic
+        let _ = Config::load::<ScheduleConfig>(config_content).unwrap();
     }
 }

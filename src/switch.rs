@@ -537,6 +537,7 @@ mod test {
 
     #[test]
     fn test_game_default() {
+        testutils::setup_logger();
         // given
         let game = Game {
             title: "".into(),
