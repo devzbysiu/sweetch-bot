@@ -27,7 +27,8 @@ fn main() -> Result<()> {
         setup_logger(&config_content)?;
         debug!("starting bot");
         let cfg = Config::load::<ScheduleConfig>(&config_content)?;
-        schedule(&cfg.schedule(), move || -> Result<()> {
+        schedule(&cfg.schedule(), || -> Result<()> {
+            let config_content = read_to_string(config_path()?)?;
             let games_cfg = Config::load::<WatchedGamesConfig>(&config_content)?;
             let games = acceptable_games(&games_cfg.watched_games(), fetch)?;
             if games.is_empty() {
