@@ -71,6 +71,54 @@ mod test {
     use super::*;
 
     #[test]
+    fn test_incorrect_args_passed_with_correct_args() {
+        // given
+        let args: Vec<String> = vec!["NOT_IMPORTANT".into(), "--init".into()];
+
+        // when
+        let incorrect_args_passed = incorrect_args_passed(&args);
+
+        // then
+        assert_eq!(incorrect_args_passed, false);
+    }
+
+    #[test]
+    fn test_incorrect_args_passed_with_too_many_args() {
+        // given
+        let args: Vec<String> = vec!["NOT_IMPORTANT".into(), "--init".into(), "TOO_MANY".into()];
+
+        // when
+        let incorrect_args_passed = incorrect_args_passed(&args);
+
+        // then
+        assert_eq!(incorrect_args_passed, true);
+    }
+
+    #[test]
+    fn test_incorrect_args_passed_without_init() {
+        // given
+        let args: Vec<String> = vec!["NOT_IMPORTANT".into(), "--other".into()];
+
+        // when
+        let incorrect_args_passed = incorrect_args_passed(&args);
+
+        // then
+        assert_eq!(incorrect_args_passed, true);
+    }
+
+    #[test]
+    fn test_incorrect_args_passed_with_too_few_args() {
+        // given
+        let args: Vec<String> = vec!["NOT_IMPORTANT".into()];
+
+        // when
+        let incorrect_args_passed = incorrect_args_passed(&args);
+
+        // then
+        assert_eq!(incorrect_args_passed, false);
+    }
+
+    #[test]
     fn test_init_arg_passed_with_more_than_2_args() {
         // given
         let args: Vec<String> = vec![
