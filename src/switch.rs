@@ -117,26 +117,12 @@ pub(crate) struct Game {
 }
 
 impl Game {
+    #[cfg(test)]
     pub(crate) fn new<S: Into<String>>(title: S) -> Self {
         Self {
             title: title.into(),
             ..Game::default()
         }
-    }
-
-    pub(crate) fn with_discounted_price(mut self, price: f64) -> Self {
-        self.price_discounted_f = Some(price);
-        self
-    }
-
-    pub(crate) fn with_regular_price(mut self, price: f64) -> Self {
-        self.price_regular_f = Some(price);
-        self
-    }
-
-    pub(crate) fn has_discount(mut self, discount: bool) -> Self {
-        self.price_has_discount_b = Some(discount);
-        self
     }
 
     pub(crate) fn title(&self) -> String {

@@ -98,7 +98,6 @@ impl WatchedGame {
 mod test {
     use super::*;
     use crate::testutils;
-    use dirs;
 
     #[test]
     fn test_load_debug_config_without_debug_option() {

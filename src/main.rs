@@ -42,7 +42,7 @@ fn main() -> Result<()> {
 }
 
 fn setup_logger(config: &str) -> Result<()> {
-    let debug_cfg = Config::load::<DebugConfig>(config.as_ref())?;
+    let debug_cfg = Config::load::<DebugConfig>(config)?;
     let log_str = if debug_cfg.debug_enabled() {
         "sweetch_bot=debug"
     } else {
