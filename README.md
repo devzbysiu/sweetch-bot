@@ -38,7 +38,7 @@ It's rather for my own use but if you find it useful you can do things with it.
 # <p id="installation">Installation</p>
 
 Currently only Linux is supported.
-- go to [releases](https://github.com/devzbysiu/je/releases) page
+- go to [releases](https://github.com/devzbysiu/sweetch-bot/releases) page
 - download the latest `sweetch-bot` archive
 - extract it
 - run `sweetch-bot`
