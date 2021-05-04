@@ -50,8 +50,6 @@ Currently only Linux is supported.
 | Platform | Value                                                  | Example                                                   |
 | -------  | ------------------------------------------------------ | --------------------------------------------------------- |
 | Linux    | `$XDG_CONFIG_HOME` or `$HOME`/.config/sweetch-bot.toml | /home/alice/.config/sweetch-bot.toml                      |
-| macOS    | `$HOME`/Library/Application Support/sweetch-bot.toml   | /Users/Alice/Library/Application Support/sweetch-bot.toml |
-| Windows  | `{FOLDERID_RoamingAppData}`/sweetch-bot.toml           | C:\Users\Alice\AppData\Roaming\sweetch-bot.toml           |
 
 ### Example configuration
 Below you can see all options which can be configured.
