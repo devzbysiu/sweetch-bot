@@ -25,10 +25,7 @@ pub(crate) struct DebugConfig {
 
 impl DebugConfig {
     pub(crate) fn debug_enabled(&self) -> bool {
-        match self.debug {
-            Some(debug) => debug,
-            None => false,
-        }
+        self.debug.unwrap_or(false)
     }
 }
 
@@ -43,8 +40,8 @@ impl ScheduleConfig {
     }
 }
 
-pub(crate) fn config_path() -> Result<PathBuf> {
-    Ok(sweetch_dir()?.join("sweetch-bot.toml"))
+pub(crate) fn config_path() -> PathBuf {
+    sweetch_dir().join("sweetch-bot.toml")
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -384,7 +381,7 @@ mod test {
         // given
         let config_dir = dirs::config_dir().unwrap();
         // when
-        let cfg_path = config_path().unwrap();
+        let cfg_path = config_path();
 
         // then
         assert_eq!(cfg_path, config_dir.join("sweetch-bot/sweetch-bot.toml"));

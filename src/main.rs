@@ -23,14 +23,14 @@ mod testutils;
 fn main() -> Result<()> {
     handle_args(&env::args().collect::<Vec<String>>())?;
     daemonize(|| -> Result<()> {
-        let config_content = read_to_string(config_path()?)?;
+        let config_content = read_to_string(config_path())?;
         setup_logger(&config_content)?;
         debug!("starting bot");
         let cfg = Config::load::<ScheduleConfig>(&config_content)?;
         schedule(&cfg.schedule(), || -> Result<()> {
-            let config_content = read_to_string(config_path()?)?;
+            let config_content = read_to_string(config_path())?;
             let games_cfg = Config::load::<WatchedGamesConfig>(&config_content)?;
-            let games = acceptable_games(&games_cfg.watched_games(), fetch)?;
+            let games = acceptable_games(&games_cfg.watched_games(), fetch);
             if games.is_empty() {
                 notify_failure()?;
             } else {
@@ -50,7 +50,7 @@ fn setup_logger(config: &str) -> Result<()> {
         "sweetch_bot=info"
     };
     Logger::with_str(log_str)
-        .directory(sweetch_dir()?)
+        .directory(sweetch_dir())
         .log_to_file()
         .format(detailed_format)
         .rotate(

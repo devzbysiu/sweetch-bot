@@ -3,10 +3,7 @@ use anyhow::Result;
 use log::{debug, error, info};
 use serde::Deserialize;
 
-pub(crate) fn acceptable_games<F>(
-    watched_games: &[WatchedGame],
-    games_provider: F,
-) -> Result<Vec<Game>>
+pub(crate) fn acceptable_games<F>(watched_games: &[WatchedGame], games_provider: F) -> Vec<Game>
 where
     F: Fn(String) -> Result<Vec<Game>>,
 {
@@ -23,7 +20,7 @@ where
         debug!("found games: {:#?}", &found_games);
         games.extend(filter(found_games, &watched_game));
     }
-    Ok(games)
+    games
 }
 
 pub(crate) fn fetch<S: Into<String>>(title: S) -> Result<Vec<Game>> {
@@ -138,10 +135,7 @@ impl Game {
     }
 
     fn is_on_sale(&self) -> bool {
-        match self.price_has_discount_b {
-            Some(has_discount) => has_discount,
-            None => false,
-        }
+        self.price_has_discount_b.unwrap_or(false)
     }
 }
 
@@ -247,7 +241,7 @@ mod test {
         let watched_games = vec![WatchedGame::new("Game 1").with_acceptable_price(1.0)];
 
         // when
-        let filtered_games = acceptable_games(&watched_games, games_provider).unwrap();
+        let filtered_games = acceptable_games(&watched_games, games_provider);
 
         // then
         assert_eq!(filtered_games, vec![]);
@@ -272,7 +266,7 @@ mod test {
         let watched_games = vec![WatchedGame::new("Game 3")];
 
         // when
-        let filtered_games = acceptable_games(&watched_games, games_provider).unwrap();
+        let filtered_games = acceptable_games(&watched_games, games_provider);
 
         // then
         assert_eq!(filtered_games, vec![]);
@@ -294,7 +288,7 @@ mod test {
         let watched_games = vec![WatchedGame::new("Game 1").with_acceptable_price(10.0)];
 
         // when
-        let filtered_games = acceptable_games(&watched_games, games_provider).unwrap();
+        let filtered_games = acceptable_games(&watched_games, games_provider);
 
         // then
         assert_eq!(
@@ -323,7 +317,7 @@ mod test {
         let watched_games = vec![WatchedGame::new("Game 1").with_acceptable_price(10.0)];
 
         // when
-        let filtered_games = acceptable_games(&watched_games, games_provider).unwrap();
+        let filtered_games = acceptable_games(&watched_games, games_provider);
 
         // then
         assert_eq!(
@@ -352,7 +346,7 @@ mod test {
         let watched_games = vec![WatchedGame::new("Game 1")];
 
         // when
-        let filtered_games = acceptable_games(&watched_games, games_provider).unwrap();
+        let filtered_games = acceptable_games(&watched_games, games_provider);
 
         // then
         assert_eq!(
@@ -382,7 +376,7 @@ mod test {
         let watched_games = vec![WatchedGame::new("Game 1")];
 
         // when
-        let filtered_games = acceptable_games(&watched_games, games_provider).unwrap();
+        let filtered_games = acceptable_games(&watched_games, games_provider);
 
         // then
         assert_eq!(
@@ -413,7 +407,7 @@ mod test {
         let watched_games = vec![WatchedGame::new("Game 1").with_acceptable_price(10.0)];
 
         // when
-        let filtered_games = acceptable_games(&watched_games, games_provider).unwrap();
+        let filtered_games = acceptable_games(&watched_games, games_provider);
 
         // then
         assert_eq!(
@@ -449,7 +443,7 @@ mod test {
         let watched_games = vec![WatchedGame::new("Game 1")];
 
         // when
-        let filtered_games = acceptable_games(&watched_games, games_provider).unwrap();
+        let filtered_games = acceptable_games(&watched_games, games_provider);
 
         // then
         assert_eq!(filtered_games, vec![]);
@@ -475,7 +469,7 @@ mod test {
         let watched_games = vec![WatchedGame::new("Game 1")];
 
         // when
-        let filtered_games = acceptable_games(&watched_games, games_provider).unwrap();
+        let filtered_games = acceptable_games(&watched_games, games_provider);
 
         // then
         assert_eq!(filtered_games, vec![]);
@@ -501,7 +495,7 @@ mod test {
         let watched_games = vec![WatchedGame::new("Game 1")];
 
         // when
-        let filtered_games = acceptable_games(&watched_games, games_provider).unwrap();
+        let filtered_games = acceptable_games(&watched_games, games_provider);
 
         // then
         assert_eq!(filtered_games, vec![]);
@@ -515,7 +509,7 @@ mod test {
         let watched_games = vec![WatchedGame::new("Game 1")];
 
         // when
-        let filtered_games = acceptable_games(&watched_games, games_provider).unwrap();
+        let filtered_games = acceptable_games(&watched_games, games_provider);
 
         // then
         assert_eq!(filtered_games, vec![]);

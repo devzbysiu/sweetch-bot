@@ -41,19 +41,19 @@ fn init_arg_passed(args: &[String]) -> bool {
 }
 
 fn init() -> Result<()> {
-    create_dir_all(sweetch_dir()?)?;
+    create_dir_all(sweetch_dir())?;
     create_init_config()?;
     Ok(())
 }
 
-pub(crate) fn sweetch_dir() -> Result<PathBuf> {
-    Ok(dirs::config_dir()
+pub(crate) fn sweetch_dir() -> PathBuf {
+    dirs::config_dir()
         .expect("failed to read config dir while init")
-        .join("sweetch-bot"))
+        .join("sweetch-bot")
 }
 
 fn create_init_config() -> Result<()> {
-    let mut cfg = File::create(sweetch_dir()?.join("sweetch-bot.toml"))?;
+    let mut cfg = File::create(sweetch_dir().join("sweetch-bot.toml"))?;
     cfg.write_all(init_config().as_bytes())?;
     Ok(())
 }
