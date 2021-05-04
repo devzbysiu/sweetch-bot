@@ -40,15 +40,15 @@ jobs:
       - name: Packaging final binary
         shell: bash
         run: |
-          cd target/${{ matrix.target }}release
-          strip {{project-name}}${{ matrix.binary_postfix }}
-          tar czvf {{project-name}}-${{ matrix.artifact_prefix }}.tar.gz {{project-name}}${{ matrix.binary_postfix }}
-          shasum -a 256 {{project-name}}-${{ matrix.artifact_prefix }}.tar.gz > {{project-name}}-${{ matrix.artifact_prefix }}.sha256
+          cd target/${{ matrix.target }}/release
+          strip sweetch-bot${{ matrix.binary_postfix }}
+          tar czvf sweetch-bot-${{ matrix.artifact_prefix }}.tar.gz sweetch-bot${{ matrix.binary_postfix }}
+          shasum -a 256 sweetch-bot-${{ matrix.artifact_prefix }}.tar.gz > sweetch-bot-${{ matrix.artifact_prefix }}.sha256
       - name: Releasing assets
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            target/${{ matrix.target }}/release/{{project-name}}-${{ matrix.artifact_prefix }}.tar.gz
-            target/${{ matrix.target }}/release/{{project-name}}-${{ matrix.artifact_prefix }}.sha256
+            target/${{ matrix.target }}/release/sweetch-bot-${{ matrix.artifact_prefix }}.tar.gz
+            target/${{ matrix.target }}/release/sweetch-bot-${{ matrix.artifact_prefix }}.sha256
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
