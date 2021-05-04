@@ -3,20 +3,13 @@
   <h1><code>sweetch-bot</code></h1>
 
   <h3>
-    <strong>Daemon which sends desktop notification about games on sale</strong>
+    <strong>Daemon which sends desktop notifications about games on sale</strong>
   </h3>
 
   <p>
     <img src="https://img.shields.io/github/workflow/status/devzbysiu/sweetch-bot/ci?style=for-the-badge" alt="CI status badge" />
-    badge" />
     <a href="https://codecov.io/gh/devzbysiu/sweetch-bot">
       <img src="https://img.shields.io/codecov/c/github/devzbysiu/sweetch-bot?style=for-the-badge&token=f2339b3de9e44be0a902458a669c1160" alt="Code coverage"/>
-    </a>
-    <a href="https://crates.io/crates/sweetch-bot">
-      <img src="https://img.shields.io/crates/l/sweetch-bot?style=for-the-badge" alt="License"/>
-    </a>
-    <a href="https://docs.rs/sweetch-bot">
-      <img src="https://img.shields.io/badge/docs-latest-blue.svg?style=for-the-badge" alt="docs.rs docs" />
     </a>
   </p>
 
@@ -37,8 +30,10 @@
 
 # <p id="about">About</p>
 
-This app works as a daemon and periodically fetches data about switch games then shows desktop
+This app works as a daemon and periodically fetches the data about switch games then shows desktop
 notification if any of the predefined games is on sale or have price below set limit.
+
+It's rather for my own use but if you find it useful you can do things with it.
 
 # <p id="installation">Installation</p>
 
