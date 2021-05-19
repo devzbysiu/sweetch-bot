@@ -278,7 +278,7 @@ mod test {
          "#;
 
         // should panic
-        let _ = Config::load::<ScheduleConfig>(config_content).unwrap();
+        let _not_important = Config::load::<ScheduleConfig>(config_content).unwrap();
     }
 
     #[test]
@@ -362,7 +362,7 @@ mod test {
          "#;
 
         // should_panic
-        let _ = Config::load::<WatchedGamesConfig>(config_content).unwrap();
+        let _not_important = Config::load::<WatchedGamesConfig>(config_content).unwrap();
     }
 
     #[test]
@@ -373,7 +373,7 @@ mod test {
         let config_content = "";
 
         // should_panic
-        let _ = Config::load::<WatchedGamesConfig>(config_content).unwrap();
+        let _not_important = Config::load::<WatchedGamesConfig>(config_content).unwrap();
     }
 
     #[test]

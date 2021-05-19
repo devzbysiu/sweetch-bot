@@ -1,3 +1,3 @@
 pub(crate) fn setup_logger() {
-    let _ = flexi_logger::Logger::with_str("debug").start();
+    let _logger_res = flexi_logger::Logger::with_str("debug").start();
 }
