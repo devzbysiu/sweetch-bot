@@ -84,7 +84,7 @@ mod test {
         let incorrect_args_passed = incorrect_args_passed(&args);
 
         // then
-        assert_eq!(incorrect_args_passed, false);
+        assert!(!incorrect_args_passed);
     }
 
     #[test]
@@ -96,7 +96,7 @@ mod test {
         let incorrect_args_passed = incorrect_args_passed(&args);
 
         // then
-        assert_eq!(incorrect_args_passed, true);
+        assert!(incorrect_args_passed);
     }
 
     #[test]
@@ -108,7 +108,7 @@ mod test {
         let incorrect_args_passed = incorrect_args_passed(&args);
 
         // then
-        assert_eq!(incorrect_args_passed, true);
+        assert!(incorrect_args_passed);
     }
 
     #[test]
@@ -120,7 +120,7 @@ mod test {
         let incorrect_args_passed = incorrect_args_passed(&args);
 
         // then
-        assert_eq!(incorrect_args_passed, false);
+        assert!(!incorrect_args_passed);
     }
 
     #[test]
@@ -146,7 +146,7 @@ mod test {
         let init_arg_passed = init_arg_passed(&args);
 
         // then
-        assert_eq!(init_arg_passed, true);
+        assert!(init_arg_passed);
     }
 
     #[test]
@@ -158,7 +158,7 @@ mod test {
         let init_arg_passed = init_arg_passed(&args);
 
         // then
-        assert_eq!(init_arg_passed, false);
+        assert!(!init_arg_passed);
     }
 
     #[test]
@@ -170,7 +170,7 @@ mod test {
         let init_arg_passed = init_arg_passed(&args);
 
         // then
-        assert_eq!(init_arg_passed, true);
+        assert!(init_arg_passed);
     }
 
     #[test]

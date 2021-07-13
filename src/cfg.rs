@@ -109,7 +109,7 @@ mod test {
         let dbg_config = Config::load::<DebugConfig>(config_content).unwrap();
 
         // then
-        assert_eq!(dbg_config.debug_enabled(), false);
+        assert!(!dbg_config.debug_enabled());
     }
 
     #[test]
@@ -122,7 +122,7 @@ mod test {
         let dbg_config = Config::load::<DebugConfig>(config_content).unwrap();
 
         // then
-        assert_eq!(dbg_config.debug_enabled(), false);
+        assert!(!dbg_config.debug_enabled());
     }
 
     #[test]
@@ -135,7 +135,7 @@ mod test {
         let dbg_config = Config::load::<DebugConfig>(config_content).unwrap();
 
         // then
-        assert_eq!(dbg_config.debug_enabled(), true);
+        assert!(dbg_config.debug_enabled());
     }
 
     #[test]
@@ -159,7 +159,7 @@ mod test {
         let dbg_config = Config::load::<DebugConfig>(config_content).unwrap();
 
         // then
-        assert_eq!(dbg_config.debug_enabled(), true);
+        assert!(dbg_config.debug_enabled());
     }
 
     #[test]
@@ -181,7 +181,7 @@ mod test {
         let dbg_config = Config::load::<DebugConfig>(config_content).unwrap();
 
         // then
-        assert_eq!(dbg_config.debug_enabled(), false);
+        assert!(!dbg_config.debug_enabled());
     }
 
     #[test]
@@ -194,7 +194,7 @@ mod test {
         let dbg_config = Config::load::<DebugConfig>(config_content).unwrap();
 
         // then
-        assert_eq!(dbg_config.debug_enabled(), false);
+        assert!(!dbg_config.debug_enabled());
     }
 
     #[test]
