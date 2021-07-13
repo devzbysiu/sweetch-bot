@@ -18,7 +18,7 @@ notify-rust = "4.0.0"
 clokwerk = "0.3.3"
 daemonize = "0.4.1"
 log = "0.4.11"
-flexi_logger = { version = "0.17.1", default_features = false }
+flexi_logger = { version = "0.18.0", default_features = false }
 ureq = { version =  "1.4.1", features = ["json"] }
 serde = { version = "1.0.116", features = ["derive"] }
 toml = "0.5.6"

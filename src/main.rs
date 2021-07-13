@@ -2,6 +2,7 @@ use anyhow::Result;
 use cfg::{config_path, Config, DebugConfig, ScheduleConfig, WatchedGamesConfig};
 use cron::schedule;
 use daemon::daemonize;
+use flexi_logger::FileSpec;
 use flexi_logger::{detailed_format, Age, Cleanup, Criterion, Logger, Naming};
 use init::{handle_args, sweetch_dir};
 use log::debug;
@@ -49,9 +50,8 @@ fn setup_logger(config: &str) -> Result<()> {
     } else {
         "sweetch_bot=info"
     };
-    Logger::with_str(log_str)
-        .directory(sweetch_dir())
-        .log_to_file()
+    Logger::try_with_str(log_str)?
+        .log_to_file(FileSpec::default().directory(sweetch_dir()))
         .format(detailed_format)
         .rotate(
             Criterion::Age(Age::Day),
