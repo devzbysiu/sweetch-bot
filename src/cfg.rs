@@ -12,7 +12,7 @@ impl Config {
     where
         for<'a> T: Deserialize<'a> + fmt::Debug,
     {
-        let cfg: T = toml::from_str(&content)?;
+        let cfg: T = toml::from_str(content)?;
         debug!("loaded config: {:#?}", cfg);
         Ok(cfg)
     }

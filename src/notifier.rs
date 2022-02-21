@@ -56,7 +56,7 @@ mod test {
         let body = build_body(&games);
 
         // then
-        assert_eq!(body, "- Game 1\n- Game 2\n")
+        assert_eq!(body, "- Game 1\n- Game 2\n");
     }
 
     #[test]

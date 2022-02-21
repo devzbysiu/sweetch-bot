@@ -17,7 +17,7 @@ where
     if schedule.len() > 1 {
         for time in &schedule[1..] {
             info!("setting scheduler at: {}", time);
-            job = job.and_every(1.day()).at(&time);
+            job = job.and_every(1.day()).at(time);
         }
     }
     job.run(move || match fun() {

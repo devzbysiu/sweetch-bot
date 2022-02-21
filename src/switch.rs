@@ -18,7 +18,7 @@ where
             }
         };
         debug!("found games: {:#?}", &found_games);
-        games.extend(filter(found_games, &watched_game));
+        games.extend(filter(found_games, watched_game));
     }
     games
 }
@@ -74,7 +74,7 @@ fn titles_match(game: &Game, watched_game: &WatchedGame) -> bool {
 fn price_acceptable(game: &Game, watched_game: &WatchedGame) -> bool {
     let mut result = false;
     if let Some(price) = watched_game.acceptable_price() {
-        result = check_price_acceptable(&game, price);
+        result = check_price_acceptable(game, price);
     }
     debug!("checking price is acceptable or game on sale: {}", result);
     result
