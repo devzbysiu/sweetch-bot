@@ -32,7 +32,7 @@ pub(crate) fn fetch<S: Into<String>>(title: S) -> Result<Vec<Game>> {
 
 fn build_url<S: Into<String>>(title: S) -> String {
     let title = title.into();
-    let title_normalized = title.replace(":", "\\:"); // normalization because of solr used underneath
+    let title_normalized = title.replace(':', "\\:"); // normalization because of solr used underneath
 
     let url = format!(
         "http://search.nintendo-europe.com/en/select?rows=99\
