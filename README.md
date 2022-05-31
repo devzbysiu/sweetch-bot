@@ -38,7 +38,7 @@ It's rather for my own use but if you find it useful you can do things with it.
 
 # <p id="installation">Installation</p>
 
-Currently only Linux is supported.
+Currently, only Linux is supported.
 - go to [releases](https://github.com/devzbysiu/sweetch-bot/releases) page
 - download the latest `sweetch-bot` archive
 - extract it
@@ -88,4 +88,6 @@ at your option.
 # <p id="contribution">Contribution</p>
 
 
-Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in the work by you, as defined in the Apache-2.0 license, shall be dual licensed as above, without any additional terms or conditions.
+Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in the
+work by you, as defined in the Apache-2.0 license, shall be dual licensed as above, without any
+additional terms or conditions.
