@@ -24,9 +24,7 @@ where
 }
 
 pub(crate) fn fetch<S: Into<String>>(title: S) -> Result<Vec<Game>> {
-    let root: Root = ureq::get(&build_url(title))
-        .call()
-        .into_json_deserialize::<Root>()?;
+    let root: Root = ureq::get(&build_url(title)).call()?.into_json::<Root>()?;
     Ok(root.response.docs)
 }
 
