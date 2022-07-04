@@ -1,8 +1,10 @@
 use crate::switch::Game;
+
 use anyhow::Result;
 use log::info;
 use notify_rust::{Notification, Timeout, Urgency};
 use std::cmp;
+use std::fmt::Write;
 
 const MAX_GAMES_IN_NOTIFICATION: usize = 10;
 
@@ -10,26 +12,23 @@ pub(crate) fn notify_success(games: &[Game]) -> Result<()> {
     info!("found games on sale - sending notification");
     Notification::new()
         .summary("Game Available")
-        .body(&build_body(games))
+        .body(&build_body(games)?)
         .timeout(Timeout::Never)
         .urgency(Urgency::Critical)
         .show()?;
     Ok(())
 }
 
-fn build_body(games: &[Game]) -> String {
+fn build_body(games: &[Game]) -> Result<String> {
     let max_len = cmp::min(MAX_GAMES_IN_NOTIFICATION, games.len());
     let mut body = String::new();
     for game in games.iter().take(max_len) {
-        body.push_str(&format!("- {}\n", game.title()));
+        writeln!(body, "- {}", game.title())?;
     }
     if games.len() > MAX_GAMES_IN_NOTIFICATION {
-        body.push_str(&format!(
-            "and {} more",
-            games.len() - MAX_GAMES_IN_NOTIFICATION
-        ));
+        write!(body, "and {} more", games.len() - MAX_GAMES_IN_NOTIFICATION)?;
     }
-    body
+    Ok(body)
 }
 
 pub(crate) fn notify_failure() -> Result<()> {
@@ -53,7 +52,7 @@ mod test {
         let games = vec![Game::new("Game 1"), Game::new("Game 2")];
 
         // when
-        let body = build_body(&games);
+        let body = build_body(&games).unwrap();
 
         // then
         assert_eq!(body, "- Game 1\n- Game 2\n");
@@ -66,7 +65,7 @@ mod test {
         let expected = format!("{}and 1 more", "- Game Title\n".repeat(10));
 
         // when
-        let body = build_body(&games);
+        let body = build_body(&games).unwrap();
 
         // then
         assert_eq!(body, expected);
