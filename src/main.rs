@@ -1,43 +1,40 @@
+use crate::cfg::{config_path, Config, DebugConfig, ScheduleConfig, WatchedGamesConfig};
+use crate::init::{handle_args, sweetch_dir};
+use crate::notifier::{notify_failure, notify_success};
+use crate::switch::{acceptable_games, fetch};
+
 use anyhow::Result;
-use cfg::{config_path, Config, DebugConfig, ScheduleConfig, WatchedGamesConfig};
-use cron::schedule;
-use daemon::daemonize;
-use flexi_logger::FileSpec;
-use flexi_logger::{detailed_format, Age, Cleanup, Criterion, Logger, Naming};
-use init::{handle_args, sweetch_dir};
+use flexi_logger::{detailed_format, Age, Cleanup, Criterion, FileSpec, Logger, Naming};
 use log::debug;
-use notifier::{notify_failure, notify_success};
+use rutils::daemon::daemonize;
+use rutils::scheduler::schedule;
 use std::env;
 use std::fs::read_to_string;
-use switch::acceptable_games;
-use switch::fetch;
 
 mod cfg;
-mod cron;
-mod daemon;
 mod init;
 mod notifier;
 mod switch;
 #[cfg(test)]
 mod testutils;
 
+// TODO: get rid of unwraps
 fn main() -> Result<()> {
     handle_args(&env::args().collect::<Vec<String>>())?;
-    daemonize(|| -> Result<()> {
-        let config_content = read_to_string(config_path())?;
-        setup_logger(&config_content)?;
+    daemonize(|| {
+        let config_content = read_to_string(config_path()).unwrap();
+        setup_logger(&config_content).unwrap();
         debug!("starting bot");
-        let cfg = Config::load::<ScheduleConfig>(&config_content)?;
-        schedule(&cfg.schedule(), || -> Result<()> {
-            let config_content = read_to_string(config_path())?;
-            let games_cfg = Config::load::<WatchedGamesConfig>(&config_content)?;
+        let cfg = Config::load::<ScheduleConfig>(&config_content).unwrap();
+        schedule(&cfg.schedule(), || {
+            let config_content = read_to_string(config_path()).unwrap();
+            let games_cfg = Config::load::<WatchedGamesConfig>(&config_content).unwrap();
             let games = acceptable_games(&games_cfg.watched_games(), fetch);
             if games.is_empty() {
-                notify_failure()?;
+                notify_failure().unwrap();
             } else {
-                notify_success(&games)?;
+                notify_success(&games).unwrap();
             }
-            Ok(())
         });
     })?;
     Ok(())
