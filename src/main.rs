@@ -18,26 +18,20 @@ mod switch;
 #[cfg(test)]
 mod testutils;
 
-// TODO: get rid of unwraps
 fn main() -> Result<()> {
     handle_args(&env::args().collect::<Vec<String>>())?;
-    daemonize(|| {
-        let config_content = read_to_string(config_path()).unwrap();
-        setup_logger(&config_content).unwrap();
-        debug!("starting bot");
-        let cfg = Config::load::<ScheduleConfig>(&config_content).unwrap();
-        schedule(&cfg.schedule(), || {
-            let config_content = read_to_string(config_path()).unwrap();
-            let games_cfg = Config::load::<WatchedGamesConfig>(&config_content).unwrap();
-            let games = acceptable_games(&games_cfg.watched_games(), fetch);
-            if games.is_empty() {
-                notify_failure().unwrap();
-            } else {
-                notify_success(&games).unwrap();
-            }
-        });
-    })?;
+    daemonize(|| setup_schedule().expect("failed to setup schedule"))?;
     Ok(())
+}
+
+fn setup_schedule() -> Result<()> {
+    let config_content = read_to_string(config_path())?;
+    setup_logger(&config_content)?;
+    debug!("starting bot");
+    let cfg = Config::load::<ScheduleConfig>(&config_content)?;
+    schedule(&cfg.schedule(), || {
+        check_games_on_sale().expect("failed to check games on sale")
+    });
 }
 
 fn setup_logger(config: &str) -> Result<()> {
@@ -56,5 +50,17 @@ fn setup_logger(config: &str) -> Result<()> {
             Cleanup::KeepLogFiles(3),
         )
         .start()?;
+    Ok(())
+}
+
+fn check_games_on_sale() -> Result<()> {
+    let config_content = read_to_string(config_path())?;
+    let games_cfg = Config::load::<WatchedGamesConfig>(&config_content)?;
+    let games = acceptable_games(&games_cfg.watched_games(), fetch);
+    if games.is_empty() {
+        notify_failure()?;
+    } else {
+        notify_success(&games)?;
+    }
     Ok(())
 }
