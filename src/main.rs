@@ -14,11 +14,11 @@ mod testutils;
 
 fn main() -> Result<()> {
     setup_logger()?;
-    check_games_on_sale(Config::load(&read_to_string(config_path())?)?)?;
+    check_games_on_sale(&Config::load(&read_to_string(config_path())?)?)?;
     Ok(())
 }
 
-fn check_games_on_sale(games_cfg: Config) -> Result<()> {
+fn check_games_on_sale(games_cfg: &Config) -> Result<()> {
     let games = acceptable_games(&games_cfg.watched_games(), fetch);
     if games.is_empty() {
         notify_failure()?;
