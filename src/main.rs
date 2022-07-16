@@ -1,15 +1,12 @@
 use crate::cfg::{config_path, Config};
-use crate::init::handle_args;
 use crate::notifier::{notify_failure, notify_success};
 use crate::switch::{acceptable_games, fetch};
 
 use anyhow::Result;
 use rutils::file_logger::setup_logger;
-use std::env;
 use std::fs::read_to_string;
 
 mod cfg;
-mod init;
 mod notifier;
 mod switch;
 #[cfg(test)]
@@ -17,7 +14,6 @@ mod testutils;
 
 fn main() -> Result<()> {
     setup_logger()?;
-    handle_args(&env::args().collect::<Vec<String>>())?;
     check_games_on_sale(Config::load(&read_to_string(config_path())?)?)?;
     Ok(())
 }

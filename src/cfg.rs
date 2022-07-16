@@ -1,4 +1,3 @@
-use crate::init::sweetch_dir;
 use anyhow::Result;
 use log::debug;
 use serde::Deserialize;
@@ -24,6 +23,12 @@ impl Config {
 
 pub(crate) fn config_path() -> PathBuf {
     sweetch_dir().join("sweetch-bot.toml")
+}
+
+pub(crate) fn sweetch_dir() -> PathBuf {
+    dirs::config_dir()
+        .expect("failed to read config dir while init")
+        .join("sweetch-bot")
 }
 
 #[derive(Debug, Clone, Deserialize, PartialEq)]
