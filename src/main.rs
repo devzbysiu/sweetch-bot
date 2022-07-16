@@ -1,13 +1,10 @@
-use crate::cfg::{config_path, Config, DebugConfig, ScheduleConfig, WatchedGamesConfig};
+use crate::cfg::{config_path, Config, DebugConfig, WatchedGamesConfig};
 use crate::init::{handle_args, sweetch_dir};
 use crate::notifier::{notify_failure, notify_success};
 use crate::switch::{acceptable_games, fetch};
 
 use anyhow::Result;
 use flexi_logger::{detailed_format, Age, Cleanup, Criterion, FileSpec, Logger, Naming};
-use log::debug;
-use rutils::daemon::daemonize;
-use rutils::scheduler::schedule;
 use std::env;
 use std::fs::read_to_string;
 
@@ -20,22 +17,17 @@ mod testutils;
 
 fn main() -> Result<()> {
     handle_args(&env::args().collect::<Vec<String>>())?;
-    daemonize(|| setup_schedule().expect("failed to setup schedule"))?;
+
+    let config_content = read_to_string(config_path())?;
+    let debug_cfg = Config::load::<DebugConfig>(&config_content)?;
+    setup_logger(debug_cfg)?;
+
+    let games_cfg = Config::load::<WatchedGamesConfig>(&config_content)?;
+    check_games_on_sale(games_cfg)?;
     Ok(())
 }
 
-fn setup_schedule() -> Result<()> {
-    let config_content = read_to_string(config_path())?;
-    setup_logger(&config_content)?;
-    debug!("starting bot");
-    let cfg = Config::load::<ScheduleConfig>(&config_content)?;
-    schedule(&cfg.schedule(), || {
-        check_games_on_sale().expect("failed to check games on sale")
-    });
-}
-
-fn setup_logger(config: &str) -> Result<()> {
-    let debug_cfg = Config::load::<DebugConfig>(config)?;
+fn setup_logger(debug_cfg: DebugConfig) -> Result<()> {
     let log_str = if debug_cfg.debug_enabled() {
         "sweetch_bot=debug"
     } else {
@@ -53,9 +45,7 @@ fn setup_logger(config: &str) -> Result<()> {
     Ok(())
 }
 
-fn check_games_on_sale() -> Result<()> {
-    let config_content = read_to_string(config_path())?;
-    let games_cfg = Config::load::<WatchedGamesConfig>(&config_content)?;
+fn check_games_on_sale(games_cfg: WatchedGamesConfig) -> Result<()> {
     let games = acceptable_games(&games_cfg.watched_games(), fetch);
     if games.is_empty() {
         notify_failure()?;

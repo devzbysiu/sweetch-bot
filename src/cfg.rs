@@ -29,24 +29,8 @@ impl DebugConfig {
     }
 }
 
-#[derive(Debug, Deserialize)]
-pub(crate) struct ScheduleConfig {
-    schedule: Schedule,
-}
-
-impl ScheduleConfig {
-    pub(crate) fn schedule(&self) -> Vec<String> {
-        self.schedule.run_at.clone()
-    }
-}
-
 pub(crate) fn config_path() -> PathBuf {
     sweetch_dir().join("sweetch-bot.toml")
-}
-
-#[derive(Debug, Clone, Deserialize)]
-struct Schedule {
-    run_at: Vec<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -195,90 +179,6 @@ mod test {
 
         // then
         assert!(!dbg_config.debug_enabled());
-    }
-
-    #[test]
-    fn test_load_schedule_config_with_one_hour() {
-        testutils::setup_logger();
-        // given
-        let config_content = r#"
-            [schedule]
-            run_at = ["7:00 pm"]
-        "#;
-
-        // when
-        let schedule_cfg = Config::load::<ScheduleConfig>(config_content).unwrap();
-
-        // then
-        assert_eq!(schedule_cfg.schedule(), vec!["7:00 pm"]);
-    }
-
-    #[test]
-    fn test_load_schedule_config_with_multiple_hours() {
-        testutils::setup_logger();
-        // given
-        let config_content = r#"
-            [schedule]
-            run_at = ["7:00 am", "6:00 pm"]
-        "#;
-
-        // when
-        let schedule_cfg = Config::load::<ScheduleConfig>(config_content).unwrap();
-
-        // then
-        assert_eq!(schedule_cfg.schedule(), vec!["7:00 am", "6:00 pm"]);
-    }
-
-    #[test]
-    fn test_load_schedule_config_without_hours() {
-        testutils::setup_logger();
-        // given
-        let config_content = r#"
-            [schedule]
-            run_at = []
-        "#;
-
-        // when
-        let schedule_cfg = Config::load::<ScheduleConfig>(config_content).unwrap();
-
-        // then
-        assert_eq!(schedule_cfg.schedule(), Vec::<String>::new());
-    }
-
-    #[test]
-    fn test_load_schedule_config_with_wrong_inputs() {
-        testutils::setup_logger();
-        // given
-        let config_content = r#"
-            [schedule]
-            run_at = ["incorrect hour 1", "incorrect hour 2"]
-        "#;
-
-        // when
-        let schedule_cfg = Config::load::<ScheduleConfig>(config_content).unwrap();
-
-        // then
-        assert_eq!(
-            schedule_cfg.schedule(),
-            vec!["incorrect hour 1", "incorrect hour 2"]
-        );
-    }
-
-    #[test]
-    #[should_panic]
-    fn test_schedule_is_mandatory() {
-        testutils::setup_logger();
-        // given
-        let config_content = r#"
-            [[watched_game]]
-            title = "Game 1 title here"
-
-            [[watched_game]]
-            title = "Game 2 title here"
-         "#;
-
-        // should panic
-        let _not_important = Config::load::<ScheduleConfig>(config_content).unwrap();
     }
 
     #[test]
