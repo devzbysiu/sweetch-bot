@@ -18,17 +18,6 @@ impl Config {
     }
 }
 
-#[derive(Debug, Deserialize)]
-pub(crate) struct DebugConfig {
-    debug: Option<bool>,
-}
-
-impl DebugConfig {
-    pub(crate) fn debug_enabled(&self) -> bool {
-        self.debug.unwrap_or(false)
-    }
-}
-
 pub(crate) fn config_path() -> PathBuf {
     sweetch_dir().join("sweetch-bot.toml")
 }
@@ -79,107 +68,6 @@ impl WatchedGame {
 mod test {
     use super::*;
     use crate::testutils;
-
-    #[test]
-    fn test_load_debug_config_without_debug_option() {
-        testutils::setup_logger();
-        // given
-        let config_content = r#"
-            [[watched_game]]
-            title = "Game 2 title here"
-        "#;
-
-        // when
-        let dbg_config = Config::load::<DebugConfig>(config_content).unwrap();
-
-        // then
-        assert!(!dbg_config.debug_enabled());
-    }
-
-    #[test]
-    fn test_load_debug_config_with_debug_option_set_to_false() {
-        testutils::setup_logger();
-        // given
-        let config_content = "debug = false";
-
-        // when
-        let dbg_config = Config::load::<DebugConfig>(config_content).unwrap();
-
-        // then
-        assert!(!dbg_config.debug_enabled());
-    }
-
-    #[test]
-    fn test_load_debug_config_with_debug_enabled() {
-        testutils::setup_logger();
-        // given
-        let config_content = "debug = true";
-
-        // when
-        let dbg_config = Config::load::<DebugConfig>(config_content).unwrap();
-
-        // then
-        assert!(dbg_config.debug_enabled());
-    }
-
-    #[test]
-    fn test_load_debug_config_with_real_life_config_and_debug_enabled() {
-        testutils::setup_logger();
-        // given
-        let config_content = r#"
-            debug = true
-
-            [schedule]
-            run_at = ["7:00 pm"]
-
-            [[watched_game]]
-            title = "Game 1 title here"
-
-            [[watched_game]]
-            title = "Game 2 title here"
-        "#;
-
-        // when
-        let dbg_config = Config::load::<DebugConfig>(config_content).unwrap();
-
-        // then
-        assert!(dbg_config.debug_enabled());
-    }
-
-    #[test]
-    fn test_load_debug_config_with_real_life_config_and_without_debug() {
-        testutils::setup_logger();
-        // given
-        let config_content = r#"
-            [schedule]
-            run_at = ["7:00 pm"]
-
-            [[watched_game]]
-            title = "Game 1 title here"
-
-            [[watched_game]]
-            title = "Game 2 title here"
-        "#;
-
-        // when
-        let dbg_config = Config::load::<DebugConfig>(config_content).unwrap();
-
-        // then
-        assert!(!dbg_config.debug_enabled());
-    }
-
-    #[test]
-    fn test_load_debug_config_with_empty_config() {
-        testutils::setup_logger();
-        // given
-        let config_content = "";
-
-        // when
-        let dbg_config = Config::load::<DebugConfig>(config_content).unwrap();
-
-        // then
-        assert!(!dbg_config.debug_enabled());
-    }
 
     #[test]
     fn test_load_watched_games_config_with_valid_input() {
