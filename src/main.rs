@@ -16,13 +16,9 @@ mod switch;
 mod testutils;
 
 fn main() -> Result<()> {
-    handle_args(&env::args().collect::<Vec<String>>())?;
-
-    let config_content = read_to_string(config_path())?;
     setup_logger()?;
-
-    let games_cfg = Config::load(&config_content)?;
-    check_games_on_sale(games_cfg)?;
+    handle_args(&env::args().collect::<Vec<String>>())?;
+    check_games_on_sale(Config::load(&read_to_string(config_path())?)?)?;
     Ok(())
 }
 
