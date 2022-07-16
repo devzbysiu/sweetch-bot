@@ -2,36 +2,28 @@ use crate::init::sweetch_dir;
 use anyhow::Result;
 use log::debug;
 use serde::Deserialize;
-use std::fmt;
 use std::path::PathBuf;
 
-pub(crate) struct Config {}
+#[derive(Debug, Deserialize)]
+pub(crate) struct Config {
+    #[serde(rename = "watched_game")]
+    watched_games: Vec<WatchedGame>,
+}
 
 impl Config {
-    pub(crate) fn load<T>(content: &str) -> Result<T>
-    where
-        for<'a> T: Deserialize<'a> + fmt::Debug,
-    {
-        let cfg: T = toml::from_str(content)?;
+    pub(crate) fn load(content: &str) -> Result<Self> {
+        let cfg: Config = toml::from_str(content)?;
         debug!("loaded config: {:#?}", cfg);
         Ok(cfg)
+    }
+
+    pub(crate) fn watched_games(&self) -> Vec<WatchedGame> {
+        self.watched_games.clone()
     }
 }
 
 pub(crate) fn config_path() -> PathBuf {
     sweetch_dir().join("sweetch-bot.toml")
-}
-
-#[derive(Debug, Deserialize)]
-pub(crate) struct WatchedGamesConfig {
-    #[serde(rename = "watched_game")]
-    watched_games: Vec<WatchedGame>,
-}
-
-impl WatchedGamesConfig {
-    pub(crate) fn watched_games(&self) -> Vec<WatchedGame> {
-        self.watched_games.clone()
-    }
 }
 
 #[derive(Debug, Clone, Deserialize, PartialEq)]
@@ -83,7 +75,7 @@ mod test {
          "#;
 
         // when
-        let watched_games_cfg = Config::load::<WatchedGamesConfig>(config_content).unwrap();
+        let watched_games_cfg = Config::load(config_content).unwrap();
 
         // then
         assert_eq!(watched_games_cfg.watched_games().len(), 2);
@@ -117,7 +109,7 @@ mod test {
          "#;
 
         // when
-        let watched_games_cfg = Config::load::<WatchedGamesConfig>(config_content).unwrap();
+        let watched_games_cfg = Config::load(config_content).unwrap();
 
         // then
         assert_eq!(watched_games_cfg.watched_games().len(), 2);
@@ -150,7 +142,7 @@ mod test {
          "#;
 
         // should_panic
-        let _not_important = Config::load::<WatchedGamesConfig>(config_content).unwrap();
+        let _not_important = Config::load(config_content).unwrap();
     }
 
     #[test]
@@ -161,7 +153,7 @@ mod test {
         let config_content = "";
 
         // should_panic
-        let _not_important = Config::load::<WatchedGamesConfig>(config_content).unwrap();
+        let _not_important = Config::load(config_content).unwrap();
     }
 
     #[test]

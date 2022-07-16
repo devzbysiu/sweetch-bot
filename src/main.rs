@@ -1,4 +1,4 @@
-use crate::cfg::{config_path, Config, WatchedGamesConfig};
+use crate::cfg::{config_path, Config};
 use crate::init::handle_args;
 use crate::notifier::{notify_failure, notify_success};
 use crate::switch::{acceptable_games, fetch};
@@ -21,12 +21,12 @@ fn main() -> Result<()> {
     let config_content = read_to_string(config_path())?;
     setup_logger()?;
 
-    let games_cfg = Config::load::<WatchedGamesConfig>(&config_content)?;
+    let games_cfg = Config::load(&config_content)?;
     check_games_on_sale(games_cfg)?;
     Ok(())
 }
 
-fn check_games_on_sale(games_cfg: WatchedGamesConfig) -> Result<()> {
+fn check_games_on_sale(games_cfg: Config) -> Result<()> {
     let games = acceptable_games(&games_cfg.watched_games(), fetch);
     if games.is_empty() {
         notify_failure()?;
