@@ -21,7 +21,7 @@ ureq = { version =  "2.4.0", features = ["json"] }
 serde = { version = "1.0.138", features = ["derive"] }
 toml = "0.5.9"
 dirs = "4.0.0"
-rutils = { git = "https://github.com/devzbysiu/rutils" }
+rutils = { git = "https://github.com/devzbysiu/rutils", default-features = false, features = ["file_logger"] }
 
 [profile.release]
 opt-level = 's'
