@@ -6,28 +6,28 @@ use serde::Deserialize;
 use std::path::PathBuf;
 
 #[derive(Debug, Deserialize)]
-pub(crate) struct Config {
+pub struct Config {
     #[serde(rename = "watched_game")]
     watched_games: Vec<WatchedGame>,
 }
 
 impl Config {
-    pub(crate) fn load(content: &str) -> Result<Self> {
+    pub fn load(content: &str) -> Result<Self> {
         let cfg: Config = toml::from_str(content)?;
         debug!("loaded config: {:#?}", cfg);
         Ok(cfg)
     }
 
-    pub(crate) fn watched_games(&self) -> Vec<WatchedGame> {
+    pub fn watched_games(&self) -> Vec<WatchedGame> {
         self.watched_games.clone()
     }
 }
 
-pub(crate) fn config_path() -> PathBuf {
+pub fn config_path() -> PathBuf {
     sweetch_dir().join("sweetch-bot.toml")
 }
 
-pub(crate) fn sweetch_dir() -> PathBuf {
+pub fn sweetch_dir() -> PathBuf {
     dirs::config_dir()
         .expect("failed to read config dir while init")
         .join("sweetch-bot")
@@ -59,14 +59,8 @@ mod test {
         assert_eq!(
             watched_games_cfg.watched_games(),
             vec![
-                WatchedGame {
-                    title: "Game 1 title here".into(),
-                    acceptable_price: Some(0.7),
-                },
-                WatchedGame {
-                    title: "Game 2 title here".into(),
-                    acceptable_price: None,
-                }
+                WatchedGame::new("Game 1 title here").with_acceptable_price(0.7),
+                WatchedGame::new("Game 2 title here"),
             ]
         );
     }
@@ -93,14 +87,8 @@ mod test {
         assert_eq!(
             watched_games_cfg.watched_games(),
             vec![
-                WatchedGame {
-                    title: "Game 1 title here".into(),
-                    acceptable_price: Some(0.7),
-                },
-                WatchedGame {
-                    title: "Game 2 title here".into(),
-                    acceptable_price: None,
-                }
+                WatchedGame::new("Game 1 title here").with_acceptable_price(0.7),
+                WatchedGame::new("Game 2 title here"),
             ]
         );
     }
