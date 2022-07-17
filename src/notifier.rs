@@ -2,7 +2,7 @@ use crate::switch::Game;
 
 use anyhow::Result;
 use log::info;
-use notify_rust::{Notification, Timeout, Urgency};
+use rutils::desktop_notifier::notify;
 use std::cmp;
 use std::fmt::Write;
 
@@ -10,12 +10,7 @@ const MAX_GAMES_IN_NOTIFICATION: usize = 10;
 
 pub(crate) fn notify_success(games: &[Game]) -> Result<()> {
     info!("found games on sale - sending notification");
-    Notification::new()
-        .summary("Game Available")
-        .body(&build_body(games)?)
-        .timeout(Timeout::Never)
-        .urgency(Urgency::Critical)
-        .show()?;
+    notify(&build_body(games)?)?;
     Ok(())
 }
 
@@ -33,12 +28,7 @@ fn build_body(games: &[Game]) -> Result<String> {
 
 pub(crate) fn notify_failure() -> Result<()> {
     info!("no games on sale found - sending notification");
-    Notification::new()
-        .summary("No Gamges")
-        .body("No games on sale found.")
-        .timeout(Timeout::from(10_000))
-        .urgency(Urgency::Low)
-        .show()?;
+    notify("No games on sale found.")?;
     Ok(())
 }
 

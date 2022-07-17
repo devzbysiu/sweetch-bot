@@ -919,13 +919,14 @@ checksum = "24c8ad4f0c00e1eb5bc7614d236a7f1300e3dbd76b68cac8e06fb00b015ad8d8"
 [[package]]
 name = "rutils"
 version = "0.1.0"
-source = "git+https://github.com/devzbysiu/rutils#aea5eb4410a379c69ca9e18670d8b7f36a0fd2d3"
+source = "git+https://github.com/devzbysiu/rutils#40b194db53be9c4528bd83975bef29d00eb0d22d"
 dependencies = [
  "dirs",
  "dotenv",
  "dotenv_codegen",
  "flexi_logger",
  "log",
+ "notify-rust",
  "pretty_env_logger",
  "thiserror",
 ]
