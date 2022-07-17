@@ -1,3 +1,5 @@
+use crate::entities::WatchedGame;
+
 use anyhow::Result;
 use log::debug;
 use serde::Deserialize;
@@ -29,36 +31,6 @@ pub(crate) fn sweetch_dir() -> PathBuf {
     dirs::config_dir()
         .expect("failed to read config dir while init")
         .join("sweetch-bot")
-}
-
-#[derive(Debug, Clone, Deserialize, PartialEq)]
-pub(crate) struct WatchedGame {
-    title: String,
-    acceptable_price: Option<f64>,
-}
-
-impl WatchedGame {
-    #[cfg(test)]
-    pub(crate) fn new<S: Into<String>>(title: S) -> Self {
-        Self {
-            title: title.into(),
-            acceptable_price: None,
-        }
-    }
-
-    #[cfg(test)]
-    pub(crate) fn with_acceptable_price(mut self, price: f64) -> Self {
-        self.acceptable_price = Some(price);
-        self
-    }
-
-    pub(crate) fn title(&self) -> String {
-        self.title.clone()
-    }
-
-    pub(crate) fn acceptable_price(&self) -> Option<f64> {
-        self.acceptable_price
-    }
 }
 
 #[cfg(test)]

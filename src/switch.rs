@@ -1,4 +1,5 @@
-use crate::cfg::WatchedGame;
+use crate::entities::WatchedGame;
+
 use anyhow::Result;
 use log::{debug, error, info};
 use serde::Deserialize;
