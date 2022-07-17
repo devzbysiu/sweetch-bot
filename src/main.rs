@@ -1,4 +1,4 @@
-use crate::cfg::{config_path, Config};
+use crate::configuration::{config_path, Config};
 use crate::notifier::{notify_failure, notify_success};
 use crate::switch::{acceptable_games, fetch};
 
@@ -11,7 +11,6 @@ mod data_providers;
 mod entities;
 mod use_cases;
 
-mod cfg;
 mod notifier;
 mod switch;
 #[cfg(test)]
