@@ -6,6 +6,11 @@ use anyhow::Result;
 use rutils::file_logger::setup_logger;
 use std::fs::read_to_string;
 
+mod configuration;
+mod data_providers;
+mod entities;
+mod use_cases;
+
 mod cfg;
 mod notifier;
 mod switch;
