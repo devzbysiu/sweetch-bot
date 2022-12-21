@@ -13,13 +13,13 @@ homepage = ""
 documentation = ""
 
 [dependencies]
-anyhow = "1.0.58"
-notify-rust = "4.5.8"
+anyhow = "1.0.68"
+notify-rust = "4.6.0"
 log = "0.4.17"
-flexi_logger = { version = "0.22.5", default_features = false }
-ureq = { version =  "2.4.0", features = ["json"] }
-serde = { version = "1.0.138", features = ["derive"] }
-toml = "0.5.9"
+flexi_logger = { version = "0.24.2", default_features = false }
+ureq = { version =  "2.5.0", features = ["json"] }
+serde = { version = "1.0.151", features = ["derive"] }
+toml = "0.5.10"
 dirs = "4.0.0"
 rutils = { git = "https://github.com/devzbysiu/rutils", default-features = false, features = ["desktop_notifier", "file_logger"] }
 
