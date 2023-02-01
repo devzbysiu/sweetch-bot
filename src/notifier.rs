@@ -10,7 +10,7 @@ const MAX_GAMES_IN_NOTIFICATION: usize = 10;
 
 pub(crate) fn notify_success(games: &[Game]) -> Result<()> {
     info!("found games on sale - sending notification");
-    notify(&build_body(games)?)?;
+    notify(build_body(games)?)?;
     Ok(())
 }
 

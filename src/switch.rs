@@ -36,9 +36,8 @@ fn build_url<S: Into<String>>(title: S) -> String {
     let url = format!(
         "http://search.nintendo-europe.com/en/select?rows=99\
         &fq=type:GAME%20AND%20system_type:nintendoswitch*%20AND\
-        %20product_code_txt:*%20AND%20title:{}&q={}&sort=sorting_title\
-        %20asc&start=0&wt=json",
-        title_normalized, title
+        %20product_code_txt:*%20AND%20title:{title_normalized}&\
+        q={title}&sort=sorting_title%20asc&start=0&wt=json"
     );
     debug!("built url: {}", url);
     url
@@ -103,7 +102,7 @@ struct Response {
     docs: Vec<Game>,
 }
 
-#[derive(Deserialize, Debug, PartialEq, Clone)]
+#[derive(Deserialize, Default, Debug, PartialEq, Clone)]
 pub(crate) struct Game {
     title: String,
     price_discounted_f: Option<f64>,
@@ -135,17 +134,6 @@ impl Game {
 
     fn is_on_sale(&self) -> bool {
         self.price_has_discount_b.unwrap_or(false)
-    }
-}
-
-impl Default for Game {
-    fn default() -> Self {
-        Game {
-            title: "".into(),
-            price_discounted_f: None,
-            price_regular_f: None,
-            price_has_discount_b: None,
-        }
     }
 }
 
@@ -519,7 +507,7 @@ mod test {
         testutils::setup_logger();
         // given
         let game = Game {
-            title: "".into(),
+            title: String::new(),
             price_discounted_f: None,
             price_regular_f: None,
             price_has_discount_b: None,
